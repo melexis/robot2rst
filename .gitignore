@@ -65,7 +65,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+doc/_build/
 
 # PyBuilder
 target/
@@ -103,3 +103,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# generated files
+doc/source/example_usage.rst
