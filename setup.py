@@ -11,7 +11,7 @@ setup(
     version='1.0.0',
     url=project_url,
     author='Stein Heselmans',
-    description='A script for converting a RobotFramework file, to an RST-file',
+    description='A script for converting a RobotFramework file, to an RST file',
     long_description=open("README.rst").read(),
     zip_safe=False,
     classifiers=[
