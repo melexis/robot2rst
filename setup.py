@@ -8,9 +8,10 @@ requires = ['robotframework', 'sphinxcontrib-robotdoc', 'mlx.traceability']
 
 setup(
     name='mlx.robot2rst',
-    version='1.0.0',
+    use_scm_version={'write_to': 'mlx/__robot2rst_version__.py'},
     url=project_url,
     author='Stein Heselmans',
+    license='Apache License Version 2.0',
     description='A script for converting a RobotFramework file, to an RST file',
     long_description=open("README.rst").read(),
     zip_safe=False,
@@ -30,6 +31,7 @@ setup(
     packages=find_packages(exclude=['tests', 'doc']),
     include_package_data=True,
     install_requires=requires,
+    setup_requires=['setuptools_scm'],
     namespace_packages=['mlx'],
     keywords=['robot', 'robotframework', 'sphinx', 'traceability'],
 )
