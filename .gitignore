@@ -24,6 +24,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+mlx/__robot2rst_version__.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -64,7 +65,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+doc/_build/
 
 # PyBuilder
 target/
@@ -102,3 +103,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# generated files
+doc/source/example_usage.rst
