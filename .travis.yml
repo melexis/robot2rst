@@ -1,0 +1,54 @@
+language: python
+sudo: true
+cache: pip
+dist: xenial
+env:
+  global:
+  - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+  - SEGFAULT_SIGNALS=all
+  matrix:
+  - TOXENV=check
+matrix:
+  include:
+  - python: 3.7
+    env:
+    - TOXENV=py37,sphinx2.1,sphinx-latest,codecov
+before_install:
+- python --version
+- uname -a
+- lsb_release -a
+install:
+- pip install tox
+- virtualenv --version
+- easy_install --version
+- tox --version
+script:
+- tox -v
+after_failure:
+- more .tox/log/* | cat
+- more .tox/*/log/* | cat
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+before_deploy:
+- mkdir -p example/_build/html/
+- touch example/_build/html/.nojekyll
+deploy:
+  matrix:
+  - provider: pypi
+    distributions: sdist bdist_wheel
+    user: JasperCraeghs
+    password:
+      secure: sX69329p7Fhpq9ECNh2hFF1fpTJNUL5/IEkEsQ9lEGXZ4bklbvkgDigAzJJgo5zvzFk4lv4UckQ7zIpBMuRAH7dnrIMJ2R3PDINR0H7wqZZCzhpHdOn+gtUn7o3AnsGtApTGE/W3eYe5DZHn49tvDm/y3wc4mwWtyoZISYvhWbrIjCBe0IZ0kbulRQecTPlq+hP6sP87QjJigFzLi9JChsqVXR/UwbWDTOxn41jjMBRYkJodXMULhtOMfhGPKqo2RnFU0qczWKNsIxvgDYmW10gGvw4qrxDfiwCFPjxYdHkzvRDLH/DqTBNRvO/fCEO+Q7Spcv5/9OOkZhnxeUN2Ljd44gbirR9BMl19rMFJ+Ikk5LQ0PMS1tjLXnSc82XISGcPgVaEYbC0ptou8R8bP6g4Ewfy5Ar3d+1JePQdg+AVkFtZlHTfyR9RtciHOlsmsS3eu5ZPmAj1x355s6Usp7vZ+YI5GZ0Dwq+pv4S6OAWg60X2xBVqhWabGZd/hMknXhNj4xO4GeeiMXpZA1UffuIyqKwNNxCreNxJ/D2KtgQmSyEzIxdtBObjwkRAh3aCiF+dWhHZKqkh7jgMUMbr8i0fTvnw+6yaaCa1DvsB8eWhCOKJzSiii5e6jo98T2VaZCw9FLKJgUSHu6S2Fdt5zPDvFSd5HsYHLzZHHZuYdxiA=
+    on:
+      branch: master
+      python: 3.7
+      tags: true
+  - provider: pages
+    skip_cleanup: true
+    local_dir: example/_build/html/
+    github_token: "$GITHUB_TOKEN"
+    on:
+      branch: master
+      python: 3.7
