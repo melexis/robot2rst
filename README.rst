@@ -10,19 +10,29 @@
     :target: https://github.com/melexis/robot2rst/issues
     :alt: Contributions welcome
 
-=======
-Summary
-=======
+=======================
+Documentation robot2rst
+=======================
 
 This script can convert your .robot files from Robot Framework to reStructuredText (.rst) files with traceable items.
-This allows you to connect your requirements to test cases via the `mlx.traceability`_ Sphinx extension.
-The `sphinxcontrib-robotdoc`_ Sphinx extension is responsible for embedding the Robot Framework content.
+
+.. contents:: `Contents`
+    :depth: 2
+    :local:
 
 .. _`mlx.traceability`: https://pypi.org/project/mlx.traceability/
 
-=============
+----
+Goal
+----
+
+This script allows you to connect your requirements to test cases via the `mlx.traceability`_ Sphinx extension.
+The `sphinxcontrib-robotdoc`_ Sphinx extension is responsible for embedding the Robot Framework content with syntax
+highlighting.
+
+-------------
 Configuration
-=============
+-------------
 
 To include the script's output in your documentation you want to add the two aforementioned extensions to your
 ``extensions`` list in your *conf.py* like so:
