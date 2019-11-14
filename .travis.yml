@@ -14,6 +14,7 @@ addons:
       # for building latex/pdf
       - texlive-base
       - texlive-latex-base
+      - texlive-fonts-recommended
       - latexmk
 matrix:
   include:
