@@ -1,3 +1,15 @@
+.. image:: https://travis-ci.com/melexis/robot2rst.png?branch=master
+    :target: https://travis-ci.com/melexis/robot2rst
+    :alt: Build status
+
+.. image:: https://img.shields.io/badge/Documentation-published-brightgreen.png
+    :target: https://melexis.github.io/robot2rst/
+    :alt: Documentation
+
+.. image:: https://img.shields.io/badge/contributions-welcome-brightgreen.png?style=flat
+    :target: https://github.com/melexis/robot2rst/issues
+    :alt: Contributions welcome
+
 =======
 Summary
 =======
