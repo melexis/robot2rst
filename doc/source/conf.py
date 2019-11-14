@@ -4,6 +4,8 @@
 # list see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+import os
+import mlx.traceability
 from pkg_resources import get_distribution
 from pygments.formatters import LatexFormatter
 
@@ -89,7 +91,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = [os.path.join(os.path.dirname(mlx.traceability.__file__), 'assets')]
 
 traceability_render_relationship_per_item = True
 
