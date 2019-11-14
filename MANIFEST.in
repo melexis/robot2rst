@@ -4,3 +4,6 @@ recursive-include doc *.py
 recursive-include doc *.robot
 recursive-include doc *.rst
 recursive-include doc Makefile
+
+# added by check_manifest.py
+include tox.ini

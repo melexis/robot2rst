@@ -3,195 +3,65 @@
 Script to convert a robot test file to a traceable RST file
 '''
 
-import os
-import re
 import argparse
-import robot
+import logging
+import os
+from io import FileIO, TextIOWrapper
 
-RST_HEADER = '''
-.. _{link}:
+from mako.exceptions import RichTraceback
+from mako.runtime import Context
+from mako.template import Template
 
-{titlechars}
-{title}
-{titlechars}
+TEMPLATE_FILE = os.path.join(os.path.dirname(__file__), 'robot2rst.mako')
 
-.. contents:: `Contents`
-    :depth: 2
-    :local:
-'''
 
-RST_FOOTER = '''
-'''
-
-SETTINGS_HEADER = '''
---------
-Settings
---------
-'''
-
-VARIABLES_HEADER = '''
----------
-Variables
----------
-'''
-
-TEST_CASES_HEADER = '''
-----------
-Test cases
-----------
-'''
-
-KEYWORDS_HEADER = '''
---------
-Keywords
---------
-'''
-
-prefixes = {
-    'setting': 'SETTING-',
-    'variable': 'VARIABLE-',
-    'test_case': 'ITEST-',
-    'keyword': 'KEYWORD-',
-}
-
-SETTING_TEMPLATE = '''
-.. item:: {item} Settings for {caption}
-
-    .. robot-settings::
-        :source: {file}
-'''
-
-VARIABLE_TEMPLATE = '''
-.. item:: {item} Variables for {caption}
-
-    .. robot-variables::
-        :source: {file}
-'''
-
-TEST_CASE_TEMPLATE = '''
-.. item:: {item} {caption}
-
-    .. robot-tests:: ^{name}$
-        :source: {file}
-'''
-
-KEYWORD_TEMPLATE = '''
-.. item:: {item} {caption}
-
-    .. robot-keywords:: {name}
-        :source: {file}
-'''
-
-def to_traceable_item(name, prefix=''):
-    '''
-    Converts a name, to the name of a traceabile item
+def render_template(destination, **kwargs):
+    """
+    Renders the Mako template, and writes output file to the specified destination.
 
     Args:
-        name (str): The string to convert
-
-    Returns:
-        str: The name of the traceable item name of the given anything
-    '''
-    # Apply prefix
-    name = prefix + name
-    # Move to capitals
-    name = name.upper()
-    # Move ' : ' (or alike) to '-'
-    name = re.sub('\s*:\s*', '-', name)
-    # Replace spaces with single underscore
-    name = re.sub('\s+', '_', name)
-    return name
-
-def add_settings_to_rst(suite, robot_file, h_rst):
-    '''
-    Add settings to the RsT file
-
-    Args:
-        suite (str):        Name of the test suite
-        robot_file (str):   Path to the input robot file
-        h_rst               Handle to the RsT file
-    '''
-    h_rst.write(SETTINGS_HEADER)
-
-    h_rst.write(SETTING_TEMPLATE.format(item=to_traceable_item(suite, prefixes['setting']),
-                                        caption=suite,
-                                        file=os.path.abspath(robot_file)))
-
-def add_variables_to_rst(suite, robot_file, h_rst):
-    '''
-    Add variables to the RsT file
-
-    Args:
-        suite (str):        Name of the test suite
-        robot_file (str):   Path to the input robot file
-        h_rst               Handle to the RsT file
-    '''
-    h_rst.write(VARIABLES_HEADER)
-
-    h_rst.write(VARIABLE_TEMPLATE.format(item=to_traceable_item(suite, prefixes['variable']),
-                                         caption=suite,
-                                         file=os.path.abspath(robot_file)))
-def add_tests_to_rst(robot_file, h_rst):
-    '''
-    Add test cases to the RsT file
-
-    Args:
-        robot_file (str):   Path to the input robot file
-        h_rst               Handle to the RsT file
-    '''
-
-    suite = robot.parsing.TestData(source=robot_file)
-
-    h_rst.write(TEST_CASES_HEADER)
-
-    for test in suite.testcase_table.tests:
-        h_rst.write(TEST_CASE_TEMPLATE.format(item=to_traceable_item(test.name, prefixes['test_case']),
-                                              caption=test.name,
-                                              name=test.name,
-                                              file=os.path.abspath(robot_file)))
-
-def add_keywords_to_rst(robot_file, h_rst):
-    '''
-    Add keywords to the RsT file
-
-    Args:
-        robot_file (str):   Path to the input robot file
-        h_rst               Handle to the RsT file
-    '''
-
+        destination (str):              Location of the output file.
+        **kwargs (dict):                Variables to be used in the Mako template.
+    Raises:
+        CRITICAL:                       Error is raised by Mako template.
+    """
     try:
-        resource = robot.parsing.TestData(source=robot_file)
-    except robot.errors.DataError:
-        resource = robot.parsing.ResourceFile(source=robot_file)
-        resource.populate()
+        if not os.path.isdir(os.path.dirname(destination)):
+            os.makedirs(os.path.dirname(destination))
+        out = TextIOWrapper(FileIO(destination, 'w'), encoding='utf-8', newline='\n')
+    except TypeError:
+        # Allows to pass a file like object as destination
+        out = TextIOWrapper(destination, encoding='utf-8', newline='\n')
+    template = Template(filename=TEMPLATE_FILE, output_encoding='utf-8', input_encoding='utf-8')
+    try:
+        template.render_context(Context(out, **kwargs))
+    except OSError:
+        traceback = RichTraceback()
+        for (filename, lineno, function, line) in traceback.traceback:
+            logging.critical("File %s, line %s, in %s", filename, lineno, function)
+            logging.critical(line, "\n")
+        logging.critical("%s: %s", str(traceback.error.__class__.__name__), traceback.error)
+    finally:
+        out.close()
 
-    h_rst.write(KEYWORDS_HEADER)
 
-    for keyword in resource.keywords:
-        h_rst.write(KEYWORD_TEMPLATE.format(item=to_traceable_item(keyword.name, prefixes['keyword']),
-                                            caption=keyword.name,
-                                            name=keyword.name,
-                                            file=os.path.abspath(robot_file)))
-
-def generate_robot_2_rst(robot_file, rst_file):
-    '''
-    Generate a rst_file from a given robot_file
-
+def generate_robot_2_rst(robot_file, rst_file, prefixes):
+    """
+    Calls mako template function and passes all needed parameters.
     Args:
-        robot_file (str):   Path to the input robot file
-        rst_file (str):     Path to the output RsT file
-    '''
+        robot_file (str): Path to the input file (.robot).
+        rst_file (str): Path to the output file (.rst).
+        prefixes (dict): Dictionary of prefixes for each category.
+    """
+    suite_name = os.path.splitext(os.path.basename(rst_file))[0]
 
-    with open(rst_file, 'w') as h_rst:
-        suitename = os.path.splitext(os.path.basename(rst_file))[0]
-        h_rst.write(RST_HEADER.format(link=suitename.replace(' ', '_'),
-                                      titlechars='='*len(suitename),
-                                      title=suitename))
-        add_settings_to_rst(suitename, robot_file, h_rst)
-        add_variables_to_rst(suitename, robot_file, h_rst)
-        add_tests_to_rst(robot_file, h_rst)
-        add_keywords_to_rst(robot_file, h_rst)
-        h_rst.write(RST_FOOTER)
+    render_template(
+        rst_file,
+        suite=suite_name,
+        robot_file=os.path.abspath(robot_file),
+        prefixes=prefixes,
+    )
+
 
 def main():
     '''Main entry point for script: parse arguments and execute'''
@@ -211,6 +81,12 @@ def main():
 
     args = parser.parse_args()
 
+    prefixes = {
+        'setting': 'SETTING-',
+        'variable': 'VARIABLE-',
+        'test_case': 'ITEST-',
+        'keyword': 'KEYWORD-',
+    }
     options = {
         'keyword': args.keyword_prefix,
         'setting': args.setting_prefix,
@@ -221,7 +97,8 @@ def main():
         if option is not None:
             prefixes[key] = option
 
-    generate_robot_2_rst(args.robot_file, args.rst_file)
+    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes)
+
 
 if __name__ == "__main__":
     main()

@@ -8,11 +8,22 @@ env:
   - SEGFAULT_SIGNALS=all
   matrix:
   - TOXENV=check
+addons:
+  apt:
+    packages:
+      # for building latex/pdf
+      - texlive-base
+      - texlive-latex-base
+      - texlive-latex-recommended
+      - texlive-latex-extra
+      - texlive-fonts-recommended
+      - latexmk
+
 matrix:
   include:
   - python: 3.7
     env:
-    - TOXENV=py37,sphinx2.1,sphinx-latest,codecov
+    - TOXENV=py37,sphinx2.1,sphinx-latest
 before_install:
 - python --version
 - uname -a
@@ -32,8 +43,8 @@ notifications:
     on_success: never
     on_failure: always
 before_deploy:
-- mkdir -p example/_build/html/
-- touch example/_build/html/.nojekyll
+- mkdir -p doc/_build/html/
+- touch doc/_build/html/.nojekyll
 deploy:
   matrix:
   - provider: pypi
@@ -47,7 +58,7 @@ deploy:
       tags: true
   - provider: pages
     skip_cleanup: true
-    local_dir: example/_build/html/
+    local_dir: doc/_build/html/
     github_token: "$GITHUB_TOKEN"
     on:
       branch: master
