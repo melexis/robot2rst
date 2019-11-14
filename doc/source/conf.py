@@ -5,6 +5,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 from pkg_resources import get_distribution
+from pygments.formatters import LatexFormatter
 
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -52,7 +53,6 @@ extensions = [
     'mlx.traceability',
 ]
 
-
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
@@ -61,7 +61,10 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
+    'preamble': '''\
+\\usepackage{fancyvrb}
+\\usepackage{color}
+''' + LatexFormatter().get_style_defs()
 }
 
 # Add any paths that contain templates here, relative to this directory.
