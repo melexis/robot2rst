@@ -91,5 +91,7 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 #html_static_path = ['_static']
 
+traceability_render_relationship_per_item = True
+
 def setup(app):
     pass
