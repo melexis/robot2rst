@@ -6,7 +6,7 @@
     :target: https://melexis.github.io/robot2rst/
     :alt: Documentation
 
-.. image:: https://img.shields.io/badge/contributions-welcome-brightgreen.png?style=flat
+.. image:: https://img.shields.io/badge/contributions-welcome-brightgreen.png
     :target: https://github.com/melexis/robot2rst/issues
     :alt: Contributions welcome
 
@@ -39,6 +39,5 @@ additional configuration steps.
 
 .. _`mlx.traceability`: https://pypi.org/project/mlx.traceability/
 .. _`sphinxcontrib-robotdoc`: https://pypi.org/project/sphinxcontrib-robotdoc/
-
 .. _`documentation of mlx.traceability`: https://melexis.github.io/sphinx-traceability-extension/readme.html
 .. _`LaTeX configuration for sphinxcontrib-robotdoc`: https://github.com/datakurre/sphinxcontrib-robotdoc#latex-output
