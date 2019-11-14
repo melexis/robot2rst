@@ -46,7 +46,6 @@ before_deploy:
 - mkdir -p doc/_build/html/
 - touch doc/_build/html/.nojekyll
 deploy:
-  matrix:
   - provider: pypi
     distributions: sdist bdist_wheel
     user: JasperCraeghs
