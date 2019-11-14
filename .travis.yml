@@ -8,6 +8,13 @@ env:
   - SEGFAULT_SIGNALS=all
   matrix:
   - TOXENV=check
+addons:
+  apt:
+    packages:
+      # for building latex/pdf
+      - texlive-base
+      - texlive-latex-base
+      - latexmk
 matrix:
   include:
   - python: 3.7
