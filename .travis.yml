@@ -18,7 +18,6 @@ addons:
       - texlive-latex-extra
       - texlive-fonts-recommended
       - latexmk
-
 matrix:
   include:
   - python: 3.7
@@ -51,7 +50,7 @@ deploy:
     distributions: sdist bdist_wheel
     user: JasperCraeghs
     password:
-      secure: sX69329p7Fhpq9ECNh2hFF1fpTJNUL5/IEkEsQ9lEGXZ4bklbvkgDigAzJJgo5zvzFk4lv4UckQ7zIpBMuRAH7dnrIMJ2R3PDINR0H7wqZZCzhpHdOn+gtUn7o3AnsGtApTGE/W3eYe5DZHn49tvDm/y3wc4mwWtyoZISYvhWbrIjCBe0IZ0kbulRQecTPlq+hP6sP87QjJigFzLi9JChsqVXR/UwbWDTOxn41jjMBRYkJodXMULhtOMfhGPKqo2RnFU0qczWKNsIxvgDYmW10gGvw4qrxDfiwCFPjxYdHkzvRDLH/DqTBNRvO/fCEO+Q7Spcv5/9OOkZhnxeUN2Ljd44gbirR9BMl19rMFJ+Ikk5LQ0PMS1tjLXnSc82XISGcPgVaEYbC0ptou8R8bP6g4Ewfy5Ar3d+1JePQdg+AVkFtZlHTfyR9RtciHOlsmsS3eu5ZPmAj1x355s6Usp7vZ+YI5GZ0Dwq+pv4S6OAWg60X2xBVqhWabGZd/hMknXhNj4xO4GeeiMXpZA1UffuIyqKwNNxCreNxJ/D2KtgQmSyEzIxdtBObjwkRAh3aCiF+dWhHZKqkh7jgMUMbr8i0fTvnw+6yaaCa1DvsB8eWhCOKJzSiii5e6jo98T2VaZCw9FLKJgUSHu6S2Fdt5zPDvFSd5HsYHLzZHHZuYdxiA=
+      secure: KdNbVAfl+4AQ3UkXCSDnKHAnyu1aaxTDv3RrhfAEoe/S820bTy/3B4DnrNh1nojqotsFa/9BduxxbrsmTXwKHAER9DqLWtQB5+8ifWeePeL8Y9QDmzkGiYuyV//v1NY88x9KKe6TQsBKY/pd6mqxIdDmbIRci6j32gtntAN/qwnkNCF921qzWT/jFZjuIuUE9OZ5kcn7VfRX0K1pjPbe0AfQUv9M0HstrkQENIan11DgolMbJ0AX4ylODPSDtahQVSxBopQZX03Ql95wGCEhMmmjtD3z7sXXQe4UAK8WRDGL/VlCaGjv5Hr0jmHxIH80XA3+byarvRv/b3fl1gZVFMEEieceeDIOY1LbE5K66VWPZEKl2RiwdhbPNZz2T97UK+AvaLNZQyu5Ut7NAa8e4ihS2XJCDM5XOhlk4Pkkk3LabDEoMsA+88SmbTNdqJr3JNUqxRC517yzs/+oeqOD7fxEQN4WlhKFE+ikBmwCKd/bf/GxPJTDdISk1EW+jzjA3AmKAVkxcGA4r13NUty83BxgcGpkNKoXp1EOnXd6hyf5loLMbG9pvf8EtDibQa1ccZAc5+xMyFwSK4AqGvaPlHvxsAdDOrFXTd463WkYhI0SNCusGS4PW3bj+SZIycVK8UYkvQDX74tKVzKjrAQx7ziu72YNLnjM0fhgc4lOLIo=
     on:
       branch: master
       python: 3.7
