@@ -8,6 +8,7 @@ ${MESSAGE}       Hello, world!
 *** Test Cases ***
 My Test
     [Documentation]    Example test
+    [Tags]             RQT-SOME_RQT  ANOTHER_TAG
     Log    ${MESSAGE}
     My Keyword    /tmp
 

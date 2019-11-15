@@ -1,6 +1,6 @@
 
 '''
-Script to convert a robot test file to a traceable RST file
+Script to convert a robot test file to an RST file with traceability items
 '''
 
 import argparse
@@ -45,13 +45,14 @@ def render_template(destination, **kwargs):
         out.close()
 
 
-def generate_robot_2_rst(robot_file, rst_file, prefixes):
+def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
     """
     Calls mako template function and passes all needed parameters.
     Args:
         robot_file (str): Path to the input file (.robot).
         rst_file (str): Path to the output file (.rst).
         prefixes (dict): Dictionary of prefixes for each category.
+        tag_regex (str): Regular expression for matching tags to add a relationship link for.
     """
     suite_name = os.path.splitext(os.path.basename(rst_file))[0]
 
@@ -60,6 +61,7 @@ def generate_robot_2_rst(robot_file, rst_file, prefixes):
         suite=suite_name,
         robot_file=os.path.abspath(robot_file),
         prefixes=prefixes,
+        tag_regex=tag_regex,
     )
 
 
@@ -78,6 +80,8 @@ def main():
                         help="Overrides default 'ITEST-' prefix.")
     parser.add_argument("-v", dest='variable_prefix', action='store',
                         help="Overrides default 'VARIABLE-' prefix.")
+    parser.add_argument("--tags", dest='tag_regex', action='store', default='.*',
+                        help="Regex for matching tags to add a relationship link for. All tags get matched by default.")
 
     args = parser.parse_args()
 
@@ -97,7 +101,7 @@ def main():
         if option is not None:
             prefixes[key] = option
 
-    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes)
+    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, args.tag_regex)
 
 
 if __name__ == "__main__":
