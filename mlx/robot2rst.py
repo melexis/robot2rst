@@ -5,14 +5,14 @@ Script to convert a robot test file to an RST file with traceability items
 
 import argparse
 import logging
-import os
+from pathlib import Path
 from io import FileIO, TextIOWrapper
 
 from mako.exceptions import RichTraceback
 from mako.runtime import Context
 from mako.template import Template
 
-TEMPLATE_FILE = os.path.join(os.path.dirname(__file__), 'robot2rst.mako')
+TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 
 
 def render_template(destination, **kwargs):
@@ -20,19 +20,14 @@ def render_template(destination, **kwargs):
     Renders the Mako template, and writes output file to the specified destination.
 
     Args:
-        destination (str):              Location of the output file.
+        destination (Path):             Location of the output file.
         **kwargs (dict):                Variables to be used in the Mako template.
     Raises:
         CRITICAL:                       Error is raised by Mako template.
     """
-    try:
-        if not os.path.isdir(os.path.dirname(destination)):
-            os.makedirs(os.path.dirname(destination))
-        out = TextIOWrapper(FileIO(destination, 'w'), encoding='utf-8', newline='\n')
-    except TypeError:
-        # Allows to pass a file like object as destination
-        out = TextIOWrapper(destination, encoding='utf-8', newline='\n')
-    template = Template(filename=TEMPLATE_FILE, output_encoding='utf-8', input_encoding='utf-8')
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    out = TextIOWrapper(FileIO(str(destination), 'w'), encoding='utf-8', newline='\n')
+    template = Template(filename=str(TEMPLATE_FILE), output_encoding='utf-8', input_encoding='utf-8')
     try:
         template.render_context(Context(out, **kwargs))
     except OSError:
@@ -50,17 +45,15 @@ def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
     Calls mako template function and passes all needed parameters.
 
     Args:
-        robot_file (str): Path to the input file (.robot).
-        rst_file (str): Path to the output file (.rst).
+        robot_file (Path): Path to the input file (.robot).
+        rst_file (Path): Path to the output file (.rst).
         prefixes (dict): Dictionary of prefixes for each category.
         tag_regex (str): Regular expression for matching tags to add a relationship link for.
     """
-    suite_name = os.path.splitext(os.path.basename(rst_file))[0]
-
     render_template(
         rst_file,
-        suite=suite_name,
-        robot_file=os.path.abspath(robot_file),
+        suite=rst_file.stem,
+        robot_file=str(robot_file.resolve(strict=True)),
         prefixes=prefixes,
         tag_regex=tag_regex,
     )
@@ -116,7 +109,7 @@ def main():
     if args.trim_suffix:
         tag_regex = _tweak_prefix(tag_regex)
 
-    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, tag_regex)
+    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefixes, tag_regex)
 
 
 if __name__ == "__main__":
