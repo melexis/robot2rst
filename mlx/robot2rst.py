@@ -97,6 +97,8 @@ def main():
                         help="Overrides default 'VARIABLE-' prefix.")
     parser.add_argument("--tags", dest='tag_regex', action='store', default='.*',
                         help="Regex for matching tags to add a relationship link for. All tags get matched by default.")
+    parser.add_argument("--adjust_suffix", action='store_false',
+                        help="If the suffix of any prefix or --tags argument ends with '_-' it gets adjusted to '-'")
 
     args = parser.parse_args()
 
@@ -114,9 +116,15 @@ def main():
     }
     for key, option in options.items():
         if option is not None:
-            prefixes[key] = _tweak_prefix(option)
+            if args.adjust_suffix:
+                option = _tweak_prefix(option)
+            prefixes[key] = option
 
-    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, _tweak_prefix(args.tag_regex))
+    tag_regex = args.tag_regex
+    if args.adjust_suffix:
+        tag_regex = _tweak_prefix(tag_regex)
+
+    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, tag_regex)
 
 
 if __name__ == "__main__":
