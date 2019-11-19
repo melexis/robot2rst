@@ -48,6 +48,7 @@ def render_template(destination, **kwargs):
 def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
     """
     Calls mako template function and passes all needed parameters.
+
     Args:
         robot_file (str): Path to the input file (.robot).
         rst_file (str): Path to the output file (.rst).
@@ -66,7 +67,7 @@ def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
 
 
 def _tweak_prefix(prefix):
-    """ If a prefix or regex ends in '_-', change it to '-'
+    """ If a prefix or regex ends with '_-', change it to end with '-' instead.
 
     Args:
         prefix (str): Prefix that might need tweaking.
