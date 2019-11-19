@@ -56,8 +56,11 @@ Test cases
 
 % for test in robot.parsing.TestData(source=robot_file).testcase_table.tests:
 .. item:: ${to_traceable_item(test.name, prefixes['test_case'])} ${test.name}
-% if test.tags:
-    :validates: ${' '.join([tag for tag in test.tags if re.search(tag_regex, tag)])}
+<%
+filtered_tags = [tag for tag in test.tags if re.search(tag_regex, tag)]
+%>\
+% if filtered_tags:
+    :validates: ${' '.join(filtered_tags)}
 % endif
 
     .. robot-tests:: ^${test.name}$
