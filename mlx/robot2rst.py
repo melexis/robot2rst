@@ -87,38 +87,30 @@ def main():
                         action='store')
     parser.add_argument("--rst", dest='rst_file', help='Output RsT file', required=True,
                         action='store')
-    parser.add_argument("-k", dest='keyword_prefix', action='store',
+    parser.add_argument("-k", dest='keyword_prefix', action='store', default='KEYWORD-',
                         help="Overrides default 'KEYWORD-' prefix.")
-    parser.add_argument("-s", dest='setting_prefix', action='store',
+    parser.add_argument("-s", dest='setting_prefix', action='store', default='SETTING-',
                         help="Overrides default 'SETTING-' prefix.")
-    parser.add_argument("-t", dest='test_case_prefix', action='store',
+    parser.add_argument("-t", dest='test_case_prefix', action='store', default='ITEST-',
                         help="Overrides default 'ITEST-' prefix.")
-    parser.add_argument("-v", dest='variable_prefix', action='store',
+    parser.add_argument("-v", dest='variable_prefix', action='store', default='VARIABLE-',
                         help="Overrides default 'VARIABLE-' prefix.")
     parser.add_argument("--tags", dest='tag_regex', action='store', default='.*',
                         help="Regex for matching tags to add a relationship link for. All tags get matched by default.")
-    parser.add_argument("--trim_suffix", action='store_false',
+    parser.add_argument("--trim-suffix", action='store_true',
                         help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'")
 
     args = parser.parse_args()
 
     prefixes = {
-        'setting': 'SETTING-',
-        'variable': 'VARIABLE-',
-        'test_case': 'ITEST-',
-        'keyword': 'KEYWORD-',
-    }
-    options = {
         'keyword': args.keyword_prefix,
         'setting': args.setting_prefix,
         'test_case': args.test_case_prefix,
         'variable': args.variable_prefix,
     }
-    for key, option in options.items():
-        if option is not None:
-            if args.trim_suffix:
-                option = _tweak_prefix(option)
-            prefixes[key] = option
+    for key, prefix in prefixes.items():
+        if args.trim_suffix:
+            prefixes[key] = _tweak_prefix(prefix)
 
     tag_regex = args.tag_regex
     if args.trim_suffix:
