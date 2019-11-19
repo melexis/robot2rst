@@ -65,6 +65,20 @@ def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
     )
 
 
+def _tweak_prefix(prefix):
+    """ If a prefix or regex ends in '_-', change it to '-'
+
+    Args:
+        prefix (str): Prefix that might need tweaking.
+
+    Returns:
+        (str) Prefix that has been tweaked if it needed to.
+    """
+    if prefix.endswith('_-'):
+        prefix = prefix.rstrip('_-') + '-'
+    return prefix
+
+
 def main():
     '''Main entry point for script: parse arguments and execute'''
     parser = argparse.ArgumentParser(description='Convert robot to RsT.')
@@ -99,9 +113,9 @@ def main():
     }
     for key, option in options.items():
         if option is not None:
-            prefixes[key] = option
+            prefixes[key] = _tweak_prefix(option)
 
-    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, args.tag_regex)
+    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, _tweak_prefix(args.tag_regex))
 
 
 if __name__ == "__main__":
