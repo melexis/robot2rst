@@ -5,7 +5,6 @@ Script to convert a robot test file to an RST file with traceability items
 
 import argparse
 import logging
-import os
 from pathlib import Path
 from io import FileIO, TextIOWrapper
 
@@ -13,7 +12,7 @@ from mako.exceptions import RichTraceback
 from mako.runtime import Context
 from mako.template import Template
 
-TEMPLATE_FILE = os.path.join(os.path.dirname(__file__), 'robot2rst.mako')
+TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 
 
 def render_template(destination, **kwargs):
@@ -28,7 +27,7 @@ def render_template(destination, **kwargs):
     """
     destination.parent.mkdir(parents=True, exist_ok=True)
     out = TextIOWrapper(FileIO(str(destination), 'w'), encoding='utf-8', newline='\n')
-    template = Template(filename=TEMPLATE_FILE, output_encoding='utf-8', input_encoding='utf-8')
+    template = Template(filename=str(TEMPLATE_FILE), output_encoding='utf-8', input_encoding='utf-8')
     try:
         template.render_context(Context(out, **kwargs))
     except OSError:
