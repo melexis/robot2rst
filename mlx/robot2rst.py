@@ -48,6 +48,7 @@ def render_template(destination, **kwargs):
 def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
     """
     Calls mako template function and passes all needed parameters.
+
     Args:
         robot_file (str): Path to the input file (.robot).
         rst_file (str): Path to the output file (.rst).
@@ -63,6 +64,20 @@ def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
         prefixes=prefixes,
         tag_regex=tag_regex,
     )
+
+
+def _tweak_prefix(prefix):
+    """ If a prefix or regex ends with '_-', change it to end with '-' instead.
+
+    Args:
+        prefix (str): Prefix that might need tweaking.
+
+    Returns:
+        (str) Prefix that has been tweaked if it needed to.
+    """
+    if prefix.endswith('_-'):
+        prefix = prefix.rstrip('_-') + '-'
+    return prefix
 
 
 def main():
@@ -82,6 +97,8 @@ def main():
                         help="Overrides default 'VARIABLE-' prefix.")
     parser.add_argument("--tags", dest='tag_regex', action='store', default='.*',
                         help="Regex for matching tags to add a relationship link for. All tags get matched by default.")
+    parser.add_argument("--trim_suffix", action='store_false',
+                        help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'")
 
     args = parser.parse_args()
 
@@ -99,9 +116,15 @@ def main():
     }
     for key, option in options.items():
         if option is not None:
+            if args.trim_suffix:
+                option = _tweak_prefix(option)
             prefixes[key] = option
 
-    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, args.tag_regex)
+    tag_regex = args.tag_regex
+    if args.trim_suffix:
+        tag_regex = _tweak_prefix(tag_regex)
+
+    generate_robot_2_rst(args.robot_file, args.rst_file, prefixes, tag_regex)
 
 
 if __name__ == "__main__":
