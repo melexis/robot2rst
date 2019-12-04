@@ -15,6 +15,7 @@ setup(
     license='Apache License Version 2.0',
     description='A script for converting a RobotFramework file, to an RST file',
     long_description=open("README.rst").read(),
+    long_description_content_type='text/x-rst',
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
