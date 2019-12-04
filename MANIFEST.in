@@ -1,9 +1,12 @@
-include *.txt
+include requirements.txt
 include LICENSE
+recursive-include mlx *.mako
 recursive-include doc *.py
 recursive-include doc *.robot
 recursive-include doc *.rst
 recursive-include doc Makefile
+exclude doc/source/example_usage.rst
+exclude mlx/__robot2rst_version__.py
 
 # added by check_manifest.py
 include tox.ini
