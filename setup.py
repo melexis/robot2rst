@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 project_url = 'https://github.com/melexis/robot2rst'
 
-requires = ['robotframework', 'sphinxcontrib-robotdoc', 'mlx.traceability', 'mako']
+requires = ['robotframework', 'sphinxcontrib-robotdoc>=0.11.0,<0.12.0', 'mlx.traceability', 'mako']
 
 setup(
     name='mlx.robot2rst',
@@ -15,6 +15,7 @@ setup(
     license='Apache License Version 2.0',
     description='A script for converting a RobotFramework file, to an RST file',
     long_description=open("README.rst").read(),
+    long_description_content_type='text/x-rst',
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
