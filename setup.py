@@ -38,4 +38,7 @@ setup(
     setup_requires=['setuptools_scm'],
     namespace_packages=['mlx'],
     keywords=['robot', 'robotframework', 'sphinx', 'traceability'],
+    entry_points={
+        'console_scripts': ['mlx.robot2rst = mlx.robot2rst:main']
+    },
 )
