@@ -13,7 +13,7 @@ setup(
     author='Jasper Craeghs',
     author_email='jce@melexis.com',
     license='Apache License Version 2.0',
-    description='A script for converting a RobotFramework file, to an RST file',
+    description='Python script for converting a Robot Framework file to a reStructuredText (.rst) file',
     long_description=open("README.rst").read(),
     long_description_content_type='text/x-rst',
     zip_safe=False,
