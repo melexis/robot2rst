@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 project_url = 'https://github.com/melexis/robot2rst'
 
-requires = ['robotframework', 'sphinxcontrib-robotdoc>=0.11.0,<0.12.0', 'mlx.traceability', 'mako']
+requires = ['robotframework', 'mlx.traceability', 'mako']
 
 setup(
     name='mlx.robot2rst',
