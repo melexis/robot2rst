@@ -6,16 +6,24 @@ Library          OperatingSystem
 ${MESSAGE}       Hello, world!
 
 *** Test Cases ***
-My Test
-    [Documentation]    Example test
-    [Tags]             RQT-SOME_RQT  ANOTHER_TAG
-    Log    ${MESSAGE}
-    My Keyword    /tmp
+First Test
+    [Documentation]     Thorough and relatively lengthy documentation for the first example
+    ...                 test case.
+    [Tags]              SWRQT-SOME_RQT  ANOTHER-TAG  SWRQT-OTHER_RQT  SYSRQT-SOME_SYSTEM_RQT
+                        Log    ${MESSAGE}
+                        My Keyword    /tmp
+
+Undocumented Test
+                        Should Be Equal     ${MESSAGE}    Hello, world!
 
 Another Test
-    Should Be Equal    ${MESSAGE}    Hello, world!
+    [Documentation]     Short documentation string.
+    [Tags]              RQT-SOME_RQT  SYSRQT-SOME_SYSTEM_RQT
+                        Log    ${MESSAGE}
+                        My Keyword    /tmp
 
 *** Keywords ***
 My Keyword
-    [Arguments]    ${path}
-    Directory Should Exist    ${path}
+    [Documentation]     My keyword's documentation string.
+    [Arguments]         ${path}
+                        Directory Should Exist    ${path}

@@ -54,6 +54,19 @@ extensions = [
     'mlx.traceability',
 ]
 
+traceability_relationships = {
+    'validates': 'validated_by',
+    'ext_toolname': '',
+}
+traceability_relationship_to_string = {
+    'validates': 'Validates',
+    'validated_by': 'Validated by',
+    'ext_toolname': 'Reference to toolname'
+}
+traceability_external_relationship_to_url = {
+    'ext_toolname': 'http://toolname.company.com/my_lib/system-requirements.html#field1'
+}
+
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
 # 'papersize': 'letterpaper',

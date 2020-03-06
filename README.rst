@@ -34,7 +34,7 @@ Usage
 
 .. code-block:: console
 
-    robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- --tags SWRQT- SYSRQT- --relationships validates ext_polarion
+    robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- --tags SWRQT- SYSRQT- --relationships validates ext_toolname
 
     $ robot2rst --help
 
