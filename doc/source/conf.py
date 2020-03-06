@@ -7,7 +7,6 @@
 import os
 import mlx.traceability
 from pkg_resources import get_distribution
-from pygments.formatters import LatexFormatter
 
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -25,24 +24,9 @@ authors = ['Stein Heselmans', 'Jasper Craeghs']
 release = get_distribution('mlx.robot2rst').version
 version = '.'.join(release.split('.')[:2])
 
-latex_documents = [
-    ('index', 'robot2rst.tex', 'Script to convert .robot files to .rst files with traceable items',
-     ' \\and '.join(authors), 'manual', True),
-]
-
 man_pages = [
     ('index', 'robot2rst', 'Script to convert .robot files to .rst files with traceable items',
      authors, 1)
-]
-
-# -- Options for Texinfo output ------------------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-    ('index', 'robot2rst', 'robot2rst conversion script', '@*'.join(authors), 'robot2rst',
-     'Script to convert .robot files to .rst files with traceable items.', 'Miscellaneous'),
 ]
 
 # -- General configuration ---------------------------------------------------
@@ -66,17 +50,7 @@ traceability_relationship_to_string = {
 traceability_external_relationship_to_url = {
     'ext_toolname': 'http://toolname.company.com/my_lib/system-requirements.html#field1'
 }
-
-latex_elements = {
-# The paper size ('letterpaper' or 'a4paper').
-# 'papersize': 'letterpaper',
-
-# The font size ('10pt', '11pt' or '12pt').
-# 'pointsize': '10pt',
-
-# Additional stuff for the LaTeX preamble.
-# 'preamble': ''
-}
+traceability_render_relationship_per_item = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -85,10 +59,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
-
-# The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
-
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -102,7 +72,6 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [os.path.join(os.path.dirname(mlx.traceability.__file__), 'assets')]
 
-traceability_render_relationship_per_item = True
 
 def setup(app):
     pass
