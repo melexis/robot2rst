@@ -79,9 +79,9 @@ def main():
                         action='store')
     parser.add_argument("-p", "--prefix", action='store', default='ITEST-',
                         help="Overrides the default 'ITEST-' prefix.")
-    parser.add_argument("-r", "--relationships", nargs='*',
+    parser.add_argument("-r", "--relationships", nargs='*', default=['validates'],
                         help="Name(s) of the relationship(s) used to link to items in Tags section.")
-    parser.add_argument("-t", "--tags", nargs='*',
+    parser.add_argument("-t", "--tags", nargs='*', default=['.*'],
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
     parser.add_argument("--trim-suffix", action='store_true',
@@ -91,12 +91,10 @@ def main():
 
     prefix = _tweak_prefix(args.prefix) if args.trim_suffix else args.prefix
     tag_regexes = [_tweak_prefix(regex) if args.trim_suffix else regex for regex in args.tags]
-    tag_regexes = ['.*'] if not tag_regexes else tag_regexes
     relationships = args.relationships
-    relationships = ['validates'] if not relationships else relationships
     if len(relationships) != len(tag_regexes):
-        raise ValueError(f"Number of relationships {len(relationships)} is not equal to number of tag regexes "
-                         f"{len(tag_regexes)} given.")
+        raise ValueError(f"Number of relationships ({len(relationships)}) is not equal to number of tag regexes "
+                         f"({len(tag_regexes)}) given.")
     relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
 
     generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping)
