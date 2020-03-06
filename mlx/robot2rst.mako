@@ -65,6 +65,7 @@ ${generate_body(str(test.doc))}
 %endif
 % endfor
 
+% if gen_matrix:
 Traceability matrix
 ===================
 
@@ -82,3 +83,4 @@ The below table traces the integration test cases to the ${relationship} require
     :nocaptions:
 
 % endfor
+% endif
