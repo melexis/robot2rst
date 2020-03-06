@@ -18,7 +18,7 @@ from pygments.formatters import LatexFormatter
 # -- Project information -----------------------------------------------------
 
 project = 'mlx.robot2rst'
-copyright = '2019, Jasper Craeghs'
+copyright = '2020, Jasper Craeghs'
 authors = ['Stein Heselmans', 'Jasper Craeghs']
 
 # The full version, including alpha/beta/rc tags
@@ -51,22 +51,31 @@ texinfo_documents = [
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinxcontrib_robotdoc',
     'mlx.traceability',
 ]
 
+traceability_relationships = {
+    'validates': 'validated_by',
+    'ext_toolname': '',
+}
+traceability_relationship_to_string = {
+    'validates': 'Validates',
+    'validated_by': 'Validated by',
+    'ext_toolname': 'Reference to toolname'
+}
+traceability_external_relationship_to_url = {
+    'ext_toolname': 'http://toolname.company.com/my_lib/system-requirements.html#field1'
+}
+
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+# 'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+# 'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-    'preamble': '''\
-\\usepackage{fancyvrb}
-\\usepackage{color}
-''' + LatexFormatter().get_style_defs()
+# 'preamble': ''
 }
 
 # Add any paths that contain templates here, relative to this directory.

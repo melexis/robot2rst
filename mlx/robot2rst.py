@@ -1,8 +1,5 @@
 
-'''
-Script to convert a robot test file to an RST file with traceability items
-'''
-
+''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
 from pathlib import Path
@@ -40,22 +37,22 @@ def render_template(destination, **kwargs):
         out.close()
 
 
-def generate_robot_2_rst(robot_file, rst_file, prefixes, tag_regex):
+def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping):
     """
     Calls mako template function and passes all needed parameters.
 
     Args:
         robot_file (Path): Path to the input file (.robot).
         rst_file (Path): Path to the output file (.rst).
-        prefixes (dict): Dictionary of prefixes for each category.
-        tag_regex (str): Regular expression for matching tags to add a relationship link for.
+        prefix (str): Prefix of generated item IDs.
+        relationship_to_tag_mapping (dict): Dictionary that maps each relationship to the corresponding tag regex.
     """
     render_template(
         rst_file,
         suite=rst_file.stem,
         robot_file=str(robot_file.resolve(strict=True)),
-        prefixes=prefixes,
-        tag_regex=tag_regex,
+        prefix=prefix,
+        relationship_to_tag_mapping=relationship_to_tag_mapping,
     )
 
 
@@ -75,41 +72,34 @@ def _tweak_prefix(prefix):
 
 def main():
     '''Main entry point for script: parse arguments and execute'''
-    parser = argparse.ArgumentParser(description='Convert robot to RsT.')
-    parser.add_argument("--robot", dest='robot_file', help='Input robot file', required=True,
+    parser = argparse.ArgumentParser(description='Convert robot test cases to reStructuredText with traceable items.')
+    parser.add_argument("-i", "--robot", dest='robot_file', help='Input robot file', required=True,
                         action='store')
-    parser.add_argument("--rst", dest='rst_file', help='Output RsT file', required=True,
+    parser.add_argument("-o", "--rst", dest='rst_file', help='Output RST file', required=True,
                         action='store')
-    parser.add_argument("-k", dest='keyword_prefix', action='store', default='KEYWORD-',
-                        help="Overrides default 'KEYWORD-' prefix.")
-    parser.add_argument("-s", dest='setting_prefix', action='store', default='SETTING-',
-                        help="Overrides default 'SETTING-' prefix.")
-    parser.add_argument("-t", dest='test_case_prefix', action='store', default='ITEST-',
-                        help="Overrides default 'ITEST-' prefix.")
-    parser.add_argument("-v", dest='variable_prefix', action='store', default='VARIABLE-',
-                        help="Overrides default 'VARIABLE-' prefix.")
-    parser.add_argument("--tags", dest='tag_regex', action='store', default='.*',
-                        help="Regex for matching tags to add a relationship link for. All tags get matched by default.")
+    parser.add_argument("-p", "--prefix", action='store', default='ITEST-',
+                        help="Overrides the default 'ITEST-' prefix.")
+    parser.add_argument("-r", "--relationships", nargs='*',
+                        help="Name(s) of the relationship(s) used to link to items in Tags section.")
+    parser.add_argument("-t", "--tags", nargs='*',
+                        help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
+                             "default.")
     parser.add_argument("--trim-suffix", action='store_true',
-                        help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'")
+                        help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
 
     args = parser.parse_args()
 
-    prefixes = {
-        'keyword': args.keyword_prefix,
-        'setting': args.setting_prefix,
-        'test_case': args.test_case_prefix,
-        'variable': args.variable_prefix,
-    }
-    for key, prefix in prefixes.items():
-        if args.trim_suffix:
-            prefixes[key] = _tweak_prefix(prefix)
+    prefix = _tweak_prefix(args.prefix) if args.trim_suffix else args.prefix
+    tag_regexes = [_tweak_prefix(regex) if args.trim_suffix else regex for regex in args.tags]
+    tag_regexes = ['.*'] if not tag_regexes else tag_regexes
+    relationships = args.relationships
+    relationships = ['validates'] if not relationships else relationships
+    if len(relationships) != len(tag_regexes):
+        raise ValueError(f"Number of relationships {len(relationships)} is not equal to number of tag regexes "
+                         f"{len(tag_regexes)} given.")
+    relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
 
-    tag_regex = args.tag_regex
-    if args.trim_suffix:
-        tag_regex = _tweak_prefix(tag_regex)
-
-    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefixes, tag_regex)
+    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping)
 
 
 if __name__ == "__main__":

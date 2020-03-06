@@ -19,5 +19,5 @@ help:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-	@$(ROBOT2RST) --robot source/robot/example.robot --rst source/example_usage.rst --tags ^RQT-$
+	@$(ROBOT2RST) -i $(SOURCEDIR)/robot/example.robot -o $(SOURCEDIR)/example_usage.rst -t ^SWRQT- ^SYSRQT- -r validates ext_toolname
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
