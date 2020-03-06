@@ -28,6 +28,39 @@ This script allows you to connect your requirements to test cases via the `mlx.t
 Test cases get converted to traceable items. The documentation of each test gets used to generate the body of the item.
 Test case names get converted to item IDs with a configurable prefix. Tags can be used to link to other traceable items.
 
+-----
+Usage
+-----
+
+.. code-block:: console
+
+    robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- --tags SWRQT- SYSRQT- --relationships validates ext_polarion
+
+    $ robot2rst --help
+
+    usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [-p PREFIX]
+                     [-r [RELATIONSHIPS [RELATIONSHIPS ...]]]
+                     [-t [TAGS [TAGS ...]]] [--trim-suffix]
+
+    Convert robot test cases to reStructuredText with traceable items.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -i ROBOT_FILE, --robot ROBOT_FILE
+                            Input robot file
+      -o RST_FILE, --rst RST_FILE
+                            Output RST file
+      -p PREFIX, --prefix PREFIX
+                            Overrides the default 'ITEST-' prefix.
+      -r [RELATIONSHIPS [RELATIONSHIPS ...]], --relationships [RELATIONSHIPS [RELATIONSHIPS ...]]
+                            Name(s) of the relationship(s) used to link to items
+                            in Tags section.
+      -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
+                            Regex(es) for matching tags to add a relationship link
+                            for. All tags get matched by default.
+      --trim-suffix         If the suffix of any prefix or --tags argument ends
+                            with '_-' it gets trimmed to '-'.
+
 -------------
 Configuration
 -------------

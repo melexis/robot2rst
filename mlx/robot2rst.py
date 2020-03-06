@@ -72,10 +72,10 @@ def _tweak_prefix(prefix):
 
 def main():
     '''Main entry point for script: parse arguments and execute'''
-    parser = argparse.ArgumentParser(description='Convert robot to RsT.')
+    parser = argparse.ArgumentParser(description='Convert robot test cases to reStructuredText with traceable items.')
     parser.add_argument("-i", "--robot", dest='robot_file', help='Input robot file', required=True,
                         action='store')
-    parser.add_argument("-o", "--rst", dest='rst_file', help='Output RsT file', required=True,
+    parser.add_argument("-o", "--rst", dest='rst_file', help='Output RST file', required=True,
                         action='store')
     parser.add_argument("-p", "--prefix", action='store', default='ITEST-',
                         help="Overrides the default 'ITEST-' prefix.")
