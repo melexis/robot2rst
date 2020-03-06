@@ -54,7 +54,7 @@ Usage
                             Overrides the default 'ITEST-' prefix.
       -r [RELATIONSHIPS [RELATIONSHIPS ...]], --relationships [RELATIONSHIPS [RELATIONSHIPS ...]]
                             Name(s) of the relationship(s) used to link to items
-                            in Tags section.
+                            in Tags section. The default value is 'validates'.
       -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
                             Regex(es) for matching tags to add a relationship link
                             for. All tags get matched by default.

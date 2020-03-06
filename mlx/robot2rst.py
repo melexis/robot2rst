@@ -80,7 +80,8 @@ def main():
     parser.add_argument("-p", "--prefix", action='store', default='ITEST-',
                         help="Overrides the default 'ITEST-' prefix.")
     parser.add_argument("-r", "--relationships", nargs='*', default=['validates'],
-                        help="Name(s) of the relationship(s) used to link to items in Tags section.")
+                        help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
+                             "is 'validates'.")
     parser.add_argument("-t", "--tags", nargs='*', default=['.*'],
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
