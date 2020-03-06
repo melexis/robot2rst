@@ -1,5 +1,5 @@
 <%
-import robot
+from robot.parsing.model import TestData
 import re
 import textwrap
 
@@ -48,14 +48,16 @@ ${'='*len(suite)}
     :local:
 
 
-% for test in robot.parsing.TestData(source=robot_file).testcase_table.tests:
+% for test in TestData(source=robot_file).testcase_table.tests:
 .. item:: ${to_traceable_item(test.name, prefix)} ${test.name}
+% for relationship, tag_regex in relationship_to_tag_mapping.items():
 <%
 filtered_tags = [tag for tag in test.tags if re.search(tag_regex, tag)]
 %>\
-% if filtered_tags:
+    % if filtered_tags:
     :${relationship}: ${' '.join(filtered_tags)}
-% endif
+    % endif
+% endfor
 
 % if str(test.doc):
 ${generate_body(str(test.doc))}
@@ -66,14 +68,17 @@ ${generate_body(str(test.doc))}
 Traceability matrix
 ===================
 
-The below table traces the test cases to the validated software requirements.
+% for relationship, tag_regex in relationship_to_tag_mapping.items():
+The below table traces the integration test cases to the ${relationship} requirements.
 
-.. item-matrix:: Linking these integration test cases to the validated software requirements
+.. item-matrix:: Linking these integration test cases to the ${relationship} requirements
     :source: ${prefix}
     :target: ${tag_regex}
     :sourcetitle: Integration test case
-    :targettitle: Validated software requirement
+    :targettitle: ${relationship} requirement
     :type: ${relationship}
     :stats:
     :group:
     :nocaptions:
+
+% endfor

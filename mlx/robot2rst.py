@@ -37,7 +37,7 @@ def render_template(destination, **kwargs):
         out.close()
 
 
-def generate_robot_2_rst(robot_file, rst_file, prefix, tag_regex, relationship):
+def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping):
     """
     Calls mako template function and passes all needed parameters.
 
@@ -45,16 +45,14 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, tag_regex, relationship):
         robot_file (Path): Path to the input file (.robot).
         rst_file (Path): Path to the output file (.rst).
         prefix (str): Prefix of generated item IDs.
-        tag_regex (str): Regular expression for matching tags to add a relationship link for.
-        relationship (str): Name of the relationship.
+        relationship_to_tag_mapping (dict): Dictionary that maps each relationship to the corresponding tag regex.
     """
     render_template(
         rst_file,
         suite=rst_file.stem,
         robot_file=str(robot_file.resolve(strict=True)),
         prefix=prefix,
-        tag_regex=tag_regex,
-        relationship=relationship,
+        relationship_to_tag_mapping=relationship_to_tag_mapping,
     )
 
 
@@ -79,26 +77,29 @@ def main():
                         action='store')
     parser.add_argument("-o", "--rst", dest='rst_file', help='Output RsT file', required=True,
                         action='store')
-    parser.add_argument("-t", dest='test_case_prefix', action='store', default='ITEST-',
-                        help="Overrides default 'ITEST-' prefix.")
-    parser.add_argument("-r", "--relationship", action='store', default='validates',
-                        help="Name of the relationship used to link to items in Tags section.")
-    parser.add_argument("--tags", dest='tag_regex', action='store', default='.*',
-                        help="Regex for matching tags to add a relationship link for. All tags get matched by default.")
+    parser.add_argument("-p", "--prefix", action='store', default='ITEST-',
+                        help="Overrides the default 'ITEST-' prefix.")
+    parser.add_argument("-r", "--relationships", nargs='*',
+                        help="Name(s) of the relationship(s) used to link to items in Tags section.")
+    parser.add_argument("-t", "--tags", nargs='*',
+                        help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
+                             "default.")
     parser.add_argument("--trim-suffix", action='store_true',
                         help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
 
     args = parser.parse_args()
 
-    prefix = args.test_case_prefix
-    if args.trim_suffix:
-        prefix = _tweak_prefix(prefix)
+    prefix = _tweak_prefix(args.prefix) if args.trim_suffix else args.prefix
+    tag_regexes = [_tweak_prefix(regex) if args.trim_suffix else regex for regex in args.tags]
+    tag_regexes = ['.*'] if not tag_regexes else tag_regexes
+    relationships = args.relationships
+    relationships = ['validates'] if not relationships else relationships
+    if len(relationships) != len(tag_regexes):
+        raise ValueError(f"Number of relationships {len(relationships)} is not equal to number of tag regexes "
+                         f"{len(tag_regexes)} given.")
+    relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
 
-    tag_regex = args.tag_regex
-    if args.trim_suffix:
-        tag_regex = _tweak_prefix(tag_regex)
-
-    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, tag_regex, args.relationship)
+    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping)
 
 
 if __name__ == "__main__":
