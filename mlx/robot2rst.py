@@ -10,6 +10,7 @@ from mako.runtime import Context
 from mako.template import Template
 
 TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
+LOGGER = logging.getLogger(__name__)
 
 
 def render_template(destination, **kwargs):
@@ -37,7 +38,7 @@ def render_template(destination, **kwargs):
         out.close()
 
 
-def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping):
+def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping, gen_matrix):
     """
     Calls mako template function and passes all needed parameters.
 
@@ -46,6 +47,7 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mappi
         rst_file (Path): Path to the output file (.rst).
         prefix (str): Prefix of generated item IDs.
         relationship_to_tag_mapping (dict): Dictionary that maps each relationship to the corresponding tag regex.
+        gen_matrix (bool): True if traceability matrices are to be generated, False if not.
     """
     render_template(
         rst_file,
@@ -53,6 +55,7 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mappi
         robot_file=str(robot_file.resolve(strict=True)),
         prefix=prefix,
         relationship_to_tag_mapping=relationship_to_tag_mapping,
+        gen_matrix=gen_matrix,
     )
 
 
@@ -79,26 +82,36 @@ def main():
                         action='store')
     parser.add_argument("-p", "--prefix", action='store', default='ITEST-',
                         help="Overrides the default 'ITEST-' prefix.")
-    parser.add_argument("-r", "--relationships", nargs='*', default=['validates'],
+    parser.add_argument("-r", "--relationships", nargs='*',
                         help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
                              "is 'validates'.")
-    parser.add_argument("-t", "--tags", nargs='*', default=['.*'],
+    parser.add_argument("-t", "--tags", nargs='*',
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
     parser.add_argument("--trim-suffix", action='store_true',
                         help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
 
+    logging.basicConfig(level=logging.INFO)
     args = parser.parse_args()
+    gen_matrix = True
+    if not args.tags:
+        args.tags = ['.*']
+        gen_matrix = False
+        LOGGER.warning(f"No traceability matrix will be generated because of the use of default tag regex "
+                       f"{args.tags[0]!r}.")
+    if not args.relationships:
+        args.relationships = ['validates']
 
     prefix = _tweak_prefix(args.prefix) if args.trim_suffix else args.prefix
     tag_regexes = [_tweak_prefix(regex) if args.trim_suffix else regex for regex in args.tags]
     relationships = args.relationships
+
     if len(relationships) != len(tag_regexes):
         raise ValueError(f"Number of relationships ({len(relationships)}) is not equal to number of tag regexes "
                          f"({len(tag_regexes)}) given.")
     relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
 
-    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping)
+    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping, gen_matrix)
 
 
 if __name__ == "__main__":
