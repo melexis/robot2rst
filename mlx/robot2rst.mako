@@ -1,5 +1,4 @@
 <%
-from robot.parsing.model import TestData
 import re
 import textwrap
 
@@ -48,7 +47,7 @@ ${'='*len(suite)}
     :local:
 
 
-% for test in TestData(source=robot_file).testcase_table.tests:
+% for test in tests:
 .. item:: ${to_traceable_item(test.name, prefix)} ${test.name}
 % for relationship, tag_regex in relationship_to_tag_mapping.items():
 <%
