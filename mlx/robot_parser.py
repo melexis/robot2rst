@@ -41,7 +41,7 @@ class TestCaseParser(NodeVisitor):
             if element.type == Token.DOCUMENTATION:
                 for token in element.tokens:
                     if token.type == Token.ARGUMENT:
-                        doc += ' ' + token.value
+                        doc += token.value + ' '
                     elif token.type == Token.EOL:
                         doc += r'\n'
             elif element.type == Token.TAGS:
