@@ -32,9 +32,15 @@ def generate_body(input_string):
     Returns:
         str: Indented body, which has been word wrapped to not exceed 120 characters
     '''
-    no_newlines_input = input_string.replace(r'\r', '').replace(r'\n', ' ')
     indent = ' ' * 4
-    return indent + textwrap.fill(no_newlines_input, 115).replace('\n', '\n' + indent).strip()
+    input_string = input_string.replace(r'\r', '')
+    if input_string.startswith('*RAW*'):
+        intermediate_output = input_string.replace(r'\n', '\n' + indent)
+    else:
+        no_newlines_input = input_string.replace(r'\n', ' ')
+        intermediate_output = textwrap.fill(no_newlines_input, 115)
+        intermediate_output = intermediate_output.replace('\n', '\n' + indent)
+    return indent + intermediate_output.strip()
 %>\
 .. _${suite.replace(' ', '_')}:
 
@@ -59,7 +65,7 @@ filtered_tags = [tag for tag in test.tags if re.search(tag_regex, tag)]
 % endfor
 
 % if str(test.doc):
-${generate_body(str(test.doc))}
+${generate_body(str(test.doc).strip())}
 
 %endif
 % endfor
