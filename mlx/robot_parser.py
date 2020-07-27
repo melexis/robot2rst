@@ -39,7 +39,11 @@ class TestCaseParser(NodeVisitor):
         tags = []
         for element in node.body:
             if element.type == Token.DOCUMENTATION:
-                doc = ' '.join([el.value for el in element.tokens if el.type == Token.ARGUMENT])
+                for token in element.tokens:
+                    if token.type == Token.ARGUMENT:
+                        doc += ' ' + token.value
+                    elif token.type == Token.EOL:
+                        doc += r'\n'
             elif element.type == Token.TAGS:
                 tags = [el.value for el in element.tokens if el.type == Token.ARGUMENT]
 
