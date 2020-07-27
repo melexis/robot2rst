@@ -16,6 +16,13 @@ First Test
 Undocumented Test
                         Should Be Equal     ${MESSAGE}    Hello, world!
 
+Test with raw docs
+    [Documentation]     *RAW* An example docstring of which the line endings get preserved.
+    ...
+    ...    - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    ...    - Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        Log  The line endings of a docstring that starts with *RAW* get preserved.
+
 Another Test
     [Documentation]     Short documentation string.
     [Tags]              RQT-SOME_RQT  SYSRQT-SOME_SYSTEM_RQT
