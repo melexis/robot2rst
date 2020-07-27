@@ -2,34 +2,17 @@
 ''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
-from ast import NodeVisitor
-from collections import namedtuple
 from io import FileIO, TextIOWrapper
 from pathlib import Path
 
 from mako.exceptions import RichTraceback
 from mako.runtime import Context
 from mako.template import Template
-from robot.api import get_model, Token
+
+from .robot_parser import extract_tests
 
 TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 LOGGER = logging.getLogger(__name__)
-
-
-class TestCaseParser(NodeVisitor):
-    tests = []
-    TestAttributes = namedtuple('TestAttributes', 'name doc tags')
-
-    def visit_TestCase(self, node):
-        doc = ''
-        tags = []
-        for element in node.body:
-            if element.type == Token.DOCUMENTATION:
-                doc = ' '.join([el.value for el in element.tokens if el.type == Token.ARGUMENT])
-            elif element.type == Token.TAGS:
-                tags = [el.value for el in element.tokens if el.type == Token.ARGUMENT]
-
-        self.tests.append(self.TestAttributes(node.name, doc, tags))
 
 
 def render_template(destination, **kwargs):
@@ -68,15 +51,10 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mappi
         relationship_to_tag_mapping (dict): Dictionary that maps each relationship to the corresponding tag regex.
         gen_matrix (bool): True if traceability matrices are to be generated, False if not.
     """
-    model = get_model(robot_file)
-    parser = TestCaseParser()
-    parser.visit(model)
-
     render_template(
         rst_file,
-        tests=parser.tests,
+        tests=extract_tests(str(robot_file.resolve(strict=True))),
         suite=rst_file.stem,
-        robot_file=str(robot_file.resolve(strict=True)),
         prefix=prefix,
         relationship_to_tag_mapping=relationship_to_tag_mapping,
         gen_matrix=gen_matrix,
