@@ -2,6 +2,7 @@
 ''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
+from ast import NodeVisitor
 from collections import namedtuple
 from io import FileIO, TextIOWrapper
 from pathlib import Path
@@ -15,7 +16,7 @@ TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 LOGGER = logging.getLogger(__name__)
 
 
-class TestCaseParser(ast.NodeVisitor):
+class TestCaseParser(NodeVisitor):
     tests = []
     TestAttributes = namedtuple('TestAttributes', 'name doc tags')
 
