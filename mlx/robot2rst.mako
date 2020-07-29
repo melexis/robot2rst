@@ -37,6 +37,7 @@ def generate_body(input_string):
     line_separator = newline + indent
     input_string = input_string.replace(r'\r', '')
     if input_string.startswith('*RAW*'):
+        input_string = input_string[len('*RAW*'):]
         line_ending = r'\n'
     else:
         input_string = input_string.replace(r'\n', ' ')
