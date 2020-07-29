@@ -33,13 +33,18 @@ def generate_body(input_string):
         str: Indented body, which has been word wrapped to not exceed 120 characters
     '''
     indent = ' ' * 4
+    newline = '\n'
+    line_separator = newline + indent
     input_string = input_string.replace(r'\r', '')
     if input_string.startswith('*RAW*'):
-        intermediate_output = input_string.replace(r'\n', '\n' + indent)
+        line_ending = r'\n'
     else:
-        no_newlines_input = input_string.replace(r'\n', ' ')
-        intermediate_output = textwrap.fill(no_newlines_input, 115)
-        intermediate_output = intermediate_output.replace('\n', '\n' + indent)
+        input_string = input_string.replace(r'\n', ' ')
+        input_string = textwrap.fill(input_string, 115)
+        line_ending = '\n'
+    lines = input_string.split(line_ending)
+    intermediate_output = line_separator.join(map(str.strip, lines))
+    intermediate_output = intermediate_output.replace(newline + indent + newline, newline * 2)
     return indent + intermediate_output.strip()
 %>\
 .. _${suite.replace(' ', '_')}:
