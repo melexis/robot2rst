@@ -39,11 +39,19 @@ class TestCaseParser(NodeVisitor):
         tags = []
         for element in node.body:
             if element.type == Token.DOCUMENTATION:
+                in_docstring = False
+                previous_token = None
                 for token in element.tokens:
-                    if token.type == Token.ARGUMENT:
-                        doc += token.value + ' '
-                    elif token.type == Token.EOL:
-                        doc += r'\n'
+                    if in_docstring and token.type in (Token.ARGUMENT, Token.EOL, Token.SEPARATOR):
+                        if previous_token is None or previous_token.type != Token.CONTINUATION:
+                            doc += token.value
+                        elif len(token.value) > 2:
+                            doc += token.value[2:]  # remove two leading spaces, which are needed to separate the text
+                    elif token.type == Token.CONTINUATION:
+                        doc = doc.rstrip(' ')
+                    elif token.type == Token.DOCUMENTATION:
+                        in_docstring = True
+                    previous_token = token
             elif element.type == Token.TAGS:
                 tags = [el.value for el in element.tokens if el.type == Token.ARGUMENT]
 
