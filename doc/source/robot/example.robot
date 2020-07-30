@@ -17,7 +17,7 @@ Undocumented Test
                         Should Be Equal     ${MESSAGE}    Hello, world!
 
 Test with raw docs
-    [Documentation]     *RAW* An example docstring of which the line endings get preserved.
+    [Documentation]     An example docstring for which it's important its line endings get preserved.
     ...
     ...    - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     ...    - Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.

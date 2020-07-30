@@ -1,6 +1,5 @@
 <%
 import re
-import textwrap
 
 def to_traceable_item(name, prefix=''):
     '''
@@ -36,14 +35,7 @@ def generate_body(input_string):
     newline = '\n'
     line_separator = newline + indent
     input_string = input_string.replace(r'\r', '')
-    if input_string.startswith('*RAW*'):
-        input_string = input_string[len('*RAW*'):]
-        line_ending = r'\n'
-    else:
-        input_string = input_string.replace(r'\n', ' ')
-        input_string = textwrap.fill(input_string, 115)
-        line_ending = '\n'
-    lines = input_string.split(line_ending)
+    lines = input_string.split(r'\n')
     intermediate_output = line_separator.join(map(str.strip, lines))
     intermediate_output = intermediate_output.replace(newline + indent + newline, newline * 2)
     return indent + intermediate_output.strip()
