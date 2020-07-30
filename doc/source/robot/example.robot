@@ -16,7 +16,7 @@ First Test
 Undocumented Test
                         Should Be Equal     ${MESSAGE}    Hello, world!
 
-Test with raw docs
+Test with documentation in RST syntax
     [Documentation]     An example docstring for which it's important its line endings get preserved.
     ...
     ...  - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
