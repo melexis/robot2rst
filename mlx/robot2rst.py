@@ -2,12 +2,14 @@
 ''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
-from pathlib import Path
 from io import FileIO, TextIOWrapper
+from pathlib import Path
 
 from mako.exceptions import RichTraceback
 from mako.runtime import Context
 from mako.template import Template
+
+from .robot_parser import extract_tests
 
 TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 LOGGER = logging.getLogger(__name__)
@@ -51,8 +53,8 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mappi
     """
     render_template(
         rst_file,
+        tests=extract_tests(str(robot_file.resolve(strict=True))),
         suite=rst_file.stem,
-        robot_file=str(robot_file.resolve(strict=True)),
         prefix=prefix,
         relationship_to_tag_mapping=relationship_to_tag_mapping,
         gen_matrix=gen_matrix,
