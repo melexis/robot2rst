@@ -7,8 +7,7 @@ SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
-PYTHON		  = python3
-ROBOT2RST	  = $(PYTHON) -m mlx.robot2rst
+ROBOT2RST	  = robot2rst
 
 # Put it first so that "make" without argument is like "make help".
 help:
