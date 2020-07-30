@@ -24,7 +24,7 @@ Test with raw docs
     ...  - Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     ...
     ...      - Nested bullet point
-                        Log  The line endings of a docstring that starts with *RAW* get preserved.
+                        Log  The line endings and indents in a docstring get preserved.
 
 Another Test
     [Documentation]
