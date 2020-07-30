@@ -1,6 +1,8 @@
 from ast import NodeVisitor
 from collections import namedtuple
 
+from robot.api import get_model, Token
+
 
 def extract_tests(robot_file):
     """ Extracts all useful information from the tests in the .robot file.
@@ -11,15 +13,10 @@ def extract_tests(robot_file):
     Returns:
         list: List of objects with attributes name (str), doc (str) and tags (list).
     """
-    try:
-        from robot.api import get_model  # pylint: disable=import-outside-toplevel
-        model = get_model(robot_file)
-        parser = TestCaseParser()
-        parser.visit(model)
-        return parser.tests
-    except ImportError:
-        from robot.parsing.model import TestData  # pylint: disable=import-outside-toplevel
-        return TestData(source=robot_file).testcase_table.tests
+    model = get_model(robot_file)
+    parser = TestCaseParser()
+    parser.visit(model)
+    return parser.tests
 
 
 class TestCaseParser(NodeVisitor):
@@ -34,16 +31,23 @@ class TestCaseParser(NodeVisitor):
         self.tests = []
 
     def visit_TestCase(self, node):
-        from robot.api import Token  # pylint: disable=import-outside-toplevel
         doc = ''
         tags = []
         for element in node.body:
             if element.type == Token.DOCUMENTATION:
+                in_docstring = False
+                previous_token = None
                 for token in element.tokens:
-                    if token.type == Token.ARGUMENT:
-                        doc += token.value + ' '
-                    elif token.type == Token.EOL:
-                        doc += r'\n'
+                    if in_docstring and token.type in (Token.ARGUMENT, Token.EOL, Token.SEPARATOR):
+                        if previous_token is None or previous_token.type != Token.CONTINUATION:
+                            doc += token.value
+                        elif len(token.value) > 2:
+                            doc += token.value[2:]  # remove two leading spaces, which are needed to separate the text
+                    elif token.type == Token.CONTINUATION:
+                        doc = doc.rstrip(' ')
+                    elif token.type == Token.DOCUMENTATION:
+                        in_docstring = True
+                    previous_token = token
             elif element.type == Token.TAGS:
                 tags = [el.value for el in element.tokens if el.type == Token.ARGUMENT]
 

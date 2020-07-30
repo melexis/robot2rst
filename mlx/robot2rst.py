@@ -99,8 +99,8 @@ def main():
     if not args.tags:
         args.tags = ['.*']
         gen_matrix = False
-        LOGGER.warning(f"No traceability matrix will be generated because of the use of default tag regex "
-                       f"{args.tags[0]!r}.")
+        LOGGER.warning("No traceability matrix will be generated because of the use of default tag regex %r.",
+                       args.tags[0])
     if not args.relationships:
         args.relationships = ['validates']
 

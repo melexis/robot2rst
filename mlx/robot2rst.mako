@@ -1,6 +1,5 @@
 <%
 import re
-import textwrap
 
 def to_traceable_item(name, prefix=''):
     '''
@@ -26,15 +25,27 @@ def to_traceable_item(name, prefix=''):
 def generate_body(input_string):
     ''' Generates the body of the item based on the raw docstring of the robot test case.
 
+    Indents and line endings are preserved, except for the indent of the first line, which gets removed.
+
     Args:
         input_string (str): Raw docstring.
 
     Returns:
-        str: Indented body, which has been word wrapped to not exceed 120 characters
+        str: Body of the item, which is the input string with an added indent of four spaces
     '''
-    no_newlines_input = input_string.replace(r'\r', '').replace(r'\n', ' ')
     indent = ' ' * 4
-    return indent + textwrap.fill(no_newlines_input, 115).replace('\n', '\n' + indent).strip()
+    newline = '\n'
+    line_separator = newline + indent
+    input_string = input_string.replace(r'\r', '').strip()
+    lines = input_string.split(newline)
+    intermediate_output = indent
+    for line in lines:
+        if line:
+            intermediate_output += line.rstrip()
+        else:
+            intermediate_output =  intermediate_output.rstrip(' ')
+        intermediate_output += line_separator
+    return intermediate_output.rstrip()
 %>\
 .. _${suite.replace(' ', '_')}:
 
