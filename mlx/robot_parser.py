@@ -34,6 +34,8 @@ class TestCaseParser(NodeVisitor):
         doc = ''
         tags = []
         for element in node.body:
+            if not hasattr(element, 'type'):
+                continue
             if element.type == Token.DOCUMENTATION:
                 in_docstring = False
                 previous_token = None
