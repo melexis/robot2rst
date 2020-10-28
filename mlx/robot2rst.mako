@@ -89,7 +89,7 @@ The below table traces the integration test cases to the ${relationship} require
     :targettitle: ${relationship} requirement
     :type: ${relationship}
     :stats:
-    :group:
+    :group: top
     :nocaptions:
 
 % endfor
