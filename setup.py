@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 project_url = 'https://github.com/melexis/robot2rst'
 
-requires = ['robotframework>=3.2', 'mlx.traceability', 'mako']
+requires = ['robotframework>=3.2', 'mako']
 
 setup(
     name='mlx.robot2rst',
