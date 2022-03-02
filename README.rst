@@ -1,5 +1,5 @@
 .. image:: https://github.com/melexis/robot2rst/actions/workflows/python-package.yml/badge.svg?branch=master
-    :target: https://github.com/melexis/sphinx-traceability-extension/actions/workflows/python-package.yml
+    :target: https://github.com/melexis/robot2rst/actions/workflows/python-package.yml
     :alt: Build status
 
 .. image:: https://img.shields.io/badge/Documentation-published-brightgreen.svg
