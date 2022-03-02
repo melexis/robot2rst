@@ -1,5 +1,5 @@
-.. image:: https://api.travis-ci.com/melexis/robot2rst.svg?branch=master
-    :target: https://travis-ci.com/melexis/robot2rst
+.. image:: https://github.com/melexis/sphinx-traceability-extension/actions/workflows/python-package.yml/badge.svg?branch=master
+    :target: https://github.com/melexis/sphinx-traceability-extension/actions/workflows/python-package.yml
     :alt: Build status
 
 .. image:: https://img.shields.io/badge/Documentation-published-brightgreen.svg
