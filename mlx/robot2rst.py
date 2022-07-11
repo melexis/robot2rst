@@ -93,7 +93,8 @@ def main():
                              "default.")
     parser.add_argument("--type", default='i',
                         help="Optional: give value that starts with 'i' or 'q' (case-insensitive) to explicitly define "
-                             "the type of test: integration/qualification test")
+                             "the type of test: integration/qualification test. The default test type is "
+                             "'integration'.")
     parser.add_argument("--trim-suffix", action='store_true',
                         help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
 

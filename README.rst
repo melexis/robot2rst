@@ -39,8 +39,8 @@ Usage
     $ robot2rst --help
 
     usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [-p PREFIX]
-                     [-r [RELATIONSHIPS [RELATIONSHIPS ...]]]
-                     [-t [TAGS [TAGS ...]]] [--trim-suffix]
+                     [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]] [--type TYPE]
+                     [--trim-suffix]
 
     Convert robot test cases to reStructuredText with traceable items.
 
@@ -53,13 +53,16 @@ Usage
       -p PREFIX, --prefix PREFIX
                             Overrides the default 'ITEST-' prefix.
       -r [RELATIONSHIPS [RELATIONSHIPS ...]], --relationships [RELATIONSHIPS [RELATIONSHIPS ...]]
-                            Name(s) of the relationship(s) used to link to items
-                            in Tags section. The default value is 'validates'.
+                            Name(s) of the relationship(s) used to link to items in Tags section.
+                            The default value is 'validates'.
       -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
-                            Regex(es) for matching tags to add a relationship link
-                            for. All tags get matched by default.
-      --trim-suffix         If the suffix of any prefix or --tags argument ends
-                            with '_-' it gets trimmed to '-'.
+                            Regex(es) for matching tags to add a relationship link for. All tags get
+                            matched by default.
+      --type TYPE           Optional: give value that starts with 'i' or 'q' (case-insensitive) to
+                            explicitly define the type of test: integration/qualification test. The
+                            default test type is 'integration'.
+      --trim-suffix         If the suffix of any prefix or --tags argument ends with '_-' it gets
+                            trimmed to '-'.
 
 -------------
 Configuration
