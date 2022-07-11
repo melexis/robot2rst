@@ -40,7 +40,7 @@ def render_template(destination, **kwargs):
         out.close()
 
 
-def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping, gen_matrix):
+def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping, gen_matrix, **kwargs):
     """
     Calls mako template function and passes all needed parameters.
 
@@ -58,6 +58,7 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mappi
         prefix=prefix,
         relationship_to_tag_mapping=relationship_to_tag_mapping,
         gen_matrix=gen_matrix,
+        **kwargs,
     )
 
 
@@ -90,6 +91,9 @@ def main():
     parser.add_argument("-t", "--tags", nargs='*',
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
+    parser.add_argument("--type", default='i',
+                        help="Optional: give value that starts with 'i' or 'q' (case-insensitive) to explicitly define "
+                             "the type of test: integration/qualification test")
     parser.add_argument("--trim-suffix", action='store_true',
                         help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
 
@@ -104,6 +108,16 @@ def main():
     if not args.relationships:
         args.relationships = ['validates']
 
+    type_map = {
+        'i': 'integration',
+        'q': 'qualification',
+    }
+    if args.type and args.type.lower()[0] in type_map:
+        test_type = type_map[args.type.lower()[0]]
+    else:
+        raise ValueError(f"The --type argument is invalid: expected a value that starts with {' or '.join(type_map)}; "
+                         f"got {args.type.lower()!r}.")
+
     prefix = _tweak_prefix(args.prefix) if args.trim_suffix else args.prefix
     tag_regexes = [_tweak_prefix(regex) if args.trim_suffix else regex for regex in args.tags]
     relationships = args.relationships
@@ -113,7 +127,8 @@ def main():
                          f"({len(tag_regexes)}) given.")
     relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
 
-    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping, gen_matrix)
+    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping, gen_matrix,
+                         test_type=test_type)
 
 
 if __name__ == "__main__":

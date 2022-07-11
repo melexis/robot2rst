@@ -80,12 +80,12 @@ Traceability Matrix
 ===================
 
 % for relationship, tag_regex in relationship_to_tag_mapping.items():
-The below table traces the integration test cases to the ${relationship} requirements.
+The below table traces the ${test_type} test cases to the ${relationship} requirements.
 
-.. item-matrix:: Linking these integration test cases to the ${relationship} requirements
+.. item-matrix:: Linking these ${test_type} test cases to the ${relationship} requirements
     :source: ${prefix}
     :target: ${tag_regex}
-    :sourcetitle: Integration test case
+    :sourcetitle: ${test_type.capitalize()} test case
     :targettitle: ${relationship} requirement
     :type: ${relationship}
     :stats:
