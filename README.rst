@@ -60,7 +60,7 @@ Usage
                             matched by default.
       --type TYPE           Optional: give value that starts with 'i' or 'q' (case-insensitive) to
                             explicitly define the type of test: integration/qualification test. The
-                            default test type is 'integration'.
+                            default is 'integration'.
       --trim-suffix         If the suffix of any prefix or --tags argument ends with '_-' it gets
                             trimmed to '-'.
 
