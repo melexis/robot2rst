@@ -76,7 +76,7 @@ ${generate_body(str(test.doc))}
 % endfor
 
 % if gen_matrix:
-Traceability matrix
+Traceability Matrix
 ===================
 
 % for relationship, tag_regex in relationship_to_tag_mapping.items():
