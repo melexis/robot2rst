@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation robot2rst &mdash; mlx.robot2rst 2.1.1 documentation</title>
+  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.0.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.js"></script>
         <script src="_static/traceability.js"></script>
@@ -33,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> mlx.robot2rst
           </a>
               <div class="version">
-                2.1
+                3.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -81,7 +82,7 @@
 <a class="reference external image-reference" href="https://melexis.github.io/robot2rst/"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-published-brightgreen.svg" /></a>
 <a class="reference external image-reference" href="https://github.com/melexis/robot2rst/issues"><img alt="Contributions welcome" src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" /></a>
 <section id="documentation-robot2rst">
-<h1>Documentation robot2rst<a class="headerlink" href="#documentation-robot2rst" title="Permalink to this headline"></a></h1>
+<h1>Documentation robot2rst<a class="headerlink" href="#documentation-robot2rst" title="Permalink to this heading"></a></h1>
 <p>This script can convert your .robot files from Robot Framework to reStructuredText (.rst) files with traceable items.</p>
 <div class="contents local topic" id="contents">
 <p class="topic-title"><cite>Contents</cite></p>
@@ -92,20 +93,20 @@
 </ul>
 </div>
 <section id="goal">
-<h2><a class="toc-backref" href="#id1">Goal</a><a class="headerlink" href="#goal" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id1">Goal</a><a class="headerlink" href="#goal" title="Permalink to this heading"></a></h2>
 <p>This script allows you to connect your requirements to test cases via the <a class="reference external" href="https://pypi.org/project/mlx.traceability/">mlx.traceability</a> Sphinx extension.
 Test cases get converted to traceable items. The documentation of each test gets used to generate the body of the item.
 Test case names get converted to item IDs with a configurable prefix. Tags can be used to link to other traceable items.</p>
 </section>
 <section id="usage">
-<h2><a class="toc-backref" href="#id2">Usage</a><a class="headerlink" href="#usage" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id2">Usage</a><a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- --tags SWRQT- SYSRQT- --relationships validates ext_toolname</span>
 
 <span class="gp">$ </span>robot2rst --help
 
 <span class="go">usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [-p PREFIX]</span>
-<span class="go">                 [-r [RELATIONSHIPS [RELATIONSHIPS ...]]]</span>
-<span class="go">                 [-t [TAGS [TAGS ...]]] [--trim-suffix]</span>
+<span class="go">                 [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]] [--type TYPE]</span>
+<span class="go">                 [--trim-suffix]</span>
 
 <span class="go">Convert robot test cases to reStructuredText with traceable items.</span>
 
@@ -116,20 +117,23 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 <span class="go">  -o RST_FILE, --rst RST_FILE</span>
 <span class="go">                        Output RST file</span>
 <span class="go">  -p PREFIX, --prefix PREFIX</span>
-<span class="go">                        Overrides the default &#39;ITEST-&#39; prefix.</span>
+<span class="go">                        Overrides the default &#39;QTEST-&#39; prefix.</span>
 <span class="go">  -r [RELATIONSHIPS [RELATIONSHIPS ...]], --relationships [RELATIONSHIPS [RELATIONSHIPS ...]]</span>
-<span class="go">                        Name(s) of the relationship(s) used to link to items</span>
-<span class="go">                        in Tags section. The default value is &#39;validates&#39;.</span>
+<span class="go">                        Name(s) of the relationship(s) used to link to items in Tags section.</span>
+<span class="go">                        The default value is &#39;validates&#39;.</span>
 <span class="go">  -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]</span>
-<span class="go">                        Regex(es) for matching tags to add a relationship link</span>
-<span class="go">                        for. All tags get matched by default.</span>
-<span class="go">  --trim-suffix         If the suffix of any prefix or --tags argument ends</span>
-<span class="go">                        with &#39;_-&#39; it gets trimmed to &#39;-&#39;.</span>
+<span class="go">                        Regex(es) for matching tags to add a relationship link for. All tags get</span>
+<span class="go">                        matched by default.</span>
+<span class="go">  --type TYPE           Give value that starts with &#39;q&#39; or &#39;i&#39; (case-insensitive) to</span>
+<span class="go">                        explicitly define the type of test: qualification/integration test. The</span>
+<span class="go">                        default is &#39;qualification&#39;.</span>
+<span class="go">  --trim-suffix         If the suffix of any prefix or --tags argument ends with &#39;_-&#39; it gets</span>
+<span class="go">                        trimmed to &#39;-&#39;.</span>
 </pre></div>
 </div>
 </section>
 <section id="configuration">
-<h2><a class="toc-backref" href="#id3">Configuration</a><a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id3">Configuration</a><a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
 <p>To include the script’s output in your documentation you want to add the aforementioned extension to your
 <code class="docutils literal notranslate"><span class="pre">extensions</span></code> list in your <em>conf.py</em> like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>

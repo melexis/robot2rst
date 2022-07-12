@@ -9,16 +9,16 @@ example_usage
     :local:
 
 
-.. item:: ITEST-FIRST_TEST First Test
+.. item:: QTEST-FIRST_TEST First Test
     :validates: SWRQT-SOME_RQT SWRQT-OTHER_RQT
     :ext_toolname: SYSRQT-SOME_SYSTEM_RQT
 
     Thorough and relatively lengthy documentation for the first example
     test case.
 
-.. item:: ITEST-UNDOCUMENTED_TEST Undocumented Test
+.. item:: QTEST-UNDOCUMENTED_TEST Undocumented Test
 
-.. item:: ITEST-TEST_WITH_DOCUMENTATION_IN_RST_SYNTAX Test with documentation in RST syntax
+.. item:: QTEST-TEST_WITH_DOCUMENTATION_IN_RST_SYNTAX Test with documentation in RST syntax
 
     An example docstring for which it's important its line endings get preserved.
 
@@ -28,33 +28,33 @@ example_usage
 
         - Nested bullet point
 
-.. item:: ITEST-ANOTHER_TEST Another Test
+.. item:: QTEST-ANOTHER_TEST Another Test
     :ext_toolname: SYSRQT-SOME_SYSTEM_RQT
 
     Short documentation string.
 
 
-Traceability matrix
+Traceability Matrix
 ===================
 
-The below table traces the integration test cases to the validates requirements.
+The below table traces the qualification test cases to the validates requirements.
 
-.. item-matrix:: Linking these integration test cases to the validates requirements
-    :source: ITEST-
+.. item-matrix:: Linking these qualification test cases to the validates requirements
+    :source: QTEST-
     :target: ^SWRQT-
-    :sourcetitle: Integration test case
+    :sourcetitle: Qualification test case
     :targettitle: validates requirement
     :type: validates
     :stats:
     :group: top
     :nocaptions:
 
-The below table traces the integration test cases to the ext_toolname requirements.
+The below table traces the qualification test cases to the ext_toolname requirements.
 
-.. item-matrix:: Linking these integration test cases to the ext_toolname requirements
-    :source: ITEST-
+.. item-matrix:: Linking these qualification test cases to the ext_toolname requirements
+    :source: QTEST-
     :target: ^SYSRQT-
-    :sourcetitle: Integration test case
+    :sourcetitle: Qualification test case
     :targettitle: ext_toolname requirement
     :type: ext_toolname
     :stats:
