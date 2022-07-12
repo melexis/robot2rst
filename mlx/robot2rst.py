@@ -83,17 +83,17 @@ def main():
                         action='store')
     parser.add_argument("-o", "--rst", dest='rst_file', help='Output RST file', required=True,
                         action='store')
-    parser.add_argument("-p", "--prefix", action='store', default='ITEST-',
-                        help="Overrides the default 'ITEST-' prefix.")
+    parser.add_argument("-p", "--prefix", action='store', default='QTEST-',
+                        help="Overrides the default 'QTEST-' prefix.")
     parser.add_argument("-r", "--relationships", nargs='*',
                         help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
                              "is 'validates'.")
     parser.add_argument("-t", "--tags", nargs='*',
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
-    parser.add_argument("--type", default='i',
-                        help="Optional: give value that starts with 'i' or 'q' (case-insensitive) to explicitly define "
-                             "the type of test: integration/qualification test. The default is 'integration'.")
+    parser.add_argument("--type", default='q',
+                        help="Give value that starts with 'q' or 'i' (case-insensitive) to explicitly define "
+                             "the type of test: qualification/integration test. The default is 'qualification'.")
     parser.add_argument("--trim-suffix", action='store_true',
                         help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
 
