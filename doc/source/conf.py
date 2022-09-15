@@ -36,6 +36,7 @@ man_pages = [
 # ones.
 extensions = [
     'mlx.traceability',
+    'sphinx_selective_exclude.eager_only',
 ]
 
 traceability_relationships = {
