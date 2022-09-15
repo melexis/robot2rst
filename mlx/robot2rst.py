@@ -6,7 +6,6 @@ from textwrap import indent
 from pathlib import Path
 
 from mako.exceptions import RichTraceback
-from mako.runtime import Context
 from mako.template import Template
 
 from .robot_parser import extract_tests
