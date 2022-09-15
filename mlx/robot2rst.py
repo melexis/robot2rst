@@ -31,8 +31,8 @@ def render_template(destination, only="", **kwargs):
         rst_content = template.render(**kwargs)
     except Exception:
         traceback = RichTraceback()
-        LOGGER.critical("File %s, line %s, in %s: %r", *traceback.traceback[-2])
-        LOGGER.critical("File %s, line %s, in %s: %r", *traceback.traceback[-1])
+        for entry in traceback.traceback[-2:]:
+            LOGGER.critical("File %s, line %s, in %s: %r", *entry)
     else:
         if only:
             rst_content = f".. only:: {only}\n\n{indent(rst_content, ' ' * 4)}"
