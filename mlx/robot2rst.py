@@ -2,7 +2,7 @@
 ''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
-from io import FileIO, TextIOWrapper
+from textwrap import indent
 from pathlib import Path
 
 from mako.exceptions import RichTraceback
@@ -15,29 +15,31 @@ TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 LOGGER = logging.getLogger(__name__)
 
 
-def render_template(destination, **kwargs):
+def render_template(destination, only="", **kwargs):
     """
     Renders the Mako template, and writes output file to the specified destination.
 
     Args:
-        destination (Path):             Location of the output file.
-        **kwargs (dict):                Variables to be used in the Mako template.
+        destination (Path): Location of the output file.
+        only (str): Expression for 'only' directive, which will only be added when this string is not empty.
+        **kwargs (dict): Variables to be used in the Mako template.
     Raises:
-        CRITICAL:                       Error is raised by Mako template.
+        CRITICAL: Error was raised by Mako template.
     """
     destination.parent.mkdir(parents=True, exist_ok=True)
-    out = TextIOWrapper(FileIO(str(destination), 'w'), encoding='utf-8', newline='\n')
-    template = Template(filename=str(TEMPLATE_FILE), output_encoding='utf-8', input_encoding='utf-8')
+    template = Template(filename=str(TEMPLATE_FILE))
     try:
-        template.render_context(Context(out, **kwargs))
+        rst_content = template.render(**kwargs)
     except OSError:
         traceback = RichTraceback()
         for (filename, lineno, function, line) in traceback.traceback:
             logging.critical("File %s, line %s, in %s", filename, lineno, function)
             logging.critical(line, "\n")
         logging.critical("%s: %s", str(traceback.error.__class__.__name__), traceback.error)
-    finally:
-        out.close()
+    if only:
+        rst_content = f".. only:: {only}\n\n{indent(rst_content, ' ' * 4)}"
+    with open(str(destination), 'w', encoding='utf-8', newline='\n') as rst_file:
+        rst_file.write(rst_content)
 
 
 def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping, gen_matrix, **kwargs):
@@ -83,6 +85,9 @@ def main():
                         action='store')
     parser.add_argument("-o", "--rst", dest='rst_file', help='Output RST file', required=True,
                         action='store')
+    parser.add_argument("--only", default="",
+                        help="Expression of tags for Sphinx' `only` directive that surrounds all RST content. "
+                        "By default, no `only` directive is generated.")
     parser.add_argument("-p", "--prefix", action='store', default='QTEST-',
                         help="Overrides the default 'QTEST-' prefix.")
     parser.add_argument("-r", "--relationships", nargs='*',
@@ -128,7 +133,7 @@ def main():
     relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
 
     generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping, gen_matrix,
-                         test_type=test_type)
+                         test_type=test_type, only=args.only)
 
 
 if __name__ == "__main__":
