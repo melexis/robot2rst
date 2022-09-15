@@ -74,4 +74,4 @@ html_static_path = [os.path.join(os.path.dirname(mlx.traceability.__file__), 'as
 
 
 def setup(app):
-    pass
+    tags.add('FLASH')
