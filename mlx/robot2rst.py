@@ -85,7 +85,7 @@ def main():
                         action='store')
     parser.add_argument("-o", "--rst", dest='rst_file', help='Output RST file', required=True,
                         action='store')
-    parser.add_argument("--only", default="",
+    parser.add_argument("--only", dest="expression", default="",
                         help="Expression of tags for Sphinx' `only` directive that surrounds all RST content. "
                         "By default, no `only` directive is generated.")
     parser.add_argument("-p", "--prefix", action='store', default='QTEST-',
@@ -133,7 +133,7 @@ def main():
     relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
 
     generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping, gen_matrix,
-                         test_type=test_type, only=args.only)
+                         test_type=test_type, only=args.expression)
 
 
 if __name__ == "__main__":
