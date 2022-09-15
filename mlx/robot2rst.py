@@ -29,16 +29,15 @@ def render_template(destination, only="", **kwargs):
     template = Template(filename=str(TEMPLATE_FILE))
     try:
         rst_content = template.render(**kwargs)
-    except OSError:
+    except Exception:
         traceback = RichTraceback()
-        for (filename, lineno, function, line) in traceback.traceback:
-            logging.critical("File %s, line %s, in %s", filename, lineno, function)
-            logging.critical(line, "\n")
-        logging.critical("%s: %s", str(traceback.error.__class__.__name__), traceback.error)
-    if only:
-        rst_content = f".. only:: {only}\n\n{indent(rst_content, ' ' * 4)}"
-    with open(str(destination), 'w', encoding='utf-8', newline='\n') as rst_file:
-        rst_file.write(rst_content)
+        for entry in traceback.traceback[-2:]:
+            LOGGER.critical("File %s, line %s, in %s: %r", *entry)
+    else:
+        if only:
+            rst_content = f".. only:: {only}\n\n{indent(rst_content, ' ' * 4)}"
+        with open(str(destination), 'w', encoding='utf-8', newline='\n') as rst_file:
+            rst_file.write(rst_content)
 
 
 def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping, gen_matrix, **kwargs):
