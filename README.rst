@@ -38,9 +38,9 @@ Usage
 
     $ robot2rst --help
 
-    usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [-p PREFIX]
-                     [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]] [--type TYPE]
-                     [--trim-suffix]
+    usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]
+                     [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]]
+                     [--type TYPE] [--trim-suffix]
 
     Convert robot test cases to reStructuredText with traceable items.
 
@@ -50,6 +50,8 @@ Usage
                             Input robot file
       -o RST_FILE, --rst RST_FILE
                             Output RST file
+      --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all RST
+                            content. By default, no `only` directive is generated.
       -p PREFIX, --prefix PREFIX
                             Overrides the default 'QTEST-' prefix.
       -r [RELATIONSHIPS [RELATIONSHIPS ...]], --relationships [RELATIONSHIPS [RELATIONSHIPS ...]]
@@ -79,5 +81,11 @@ To include the script's output in your documentation you want to add the aforeme
 
 Please read the `documentation of mlx.traceability`_ for additional configuration steps.
 
+If you use the ``--only`` input argument, you should also add |sphinx_selective_exclude.eager_only|_ to the
+``extensions`` list to prevent mlx.traceability from parsing the content and ignoring the effect of the
+``only`` directive.
+
 .. _`mlx.traceability`: https://pypi.org/project/mlx.traceability/
 .. _`documentation of mlx.traceability`: https://melexis.github.io/sphinx-traceability-extension/readme.html
+.. |sphinx_selective_exclude.eager_only| replace:: ``'sphinx_selective_exclude.eager_only'``
+.. _sphinx_selective_exclude.eager_only: https://pypi.org/project/sphinx-selective-exclude/
