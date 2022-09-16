@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.0.0 documentation</title>
+  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.css" type="text/css" />
@@ -34,7 +34,7 @@
             <a href="index.html" class="icon icon-home"> mlx.robot2rst
           </a>
               <div class="version">
-                3.0
+                3.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -104,9 +104,9 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 
 <span class="gp">$ </span>robot2rst --help
 
-<span class="go">usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [-p PREFIX]</span>
-<span class="go">                 [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]] [--type TYPE]</span>
-<span class="go">                 [--trim-suffix]</span>
+<span class="go">usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]</span>
+<span class="go">                 [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]]</span>
+<span class="go">                 [--type TYPE] [--trim-suffix]</span>
 
 <span class="go">Convert robot test cases to reStructuredText with traceable items.</span>
 
@@ -116,6 +116,8 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 <span class="go">                        Input robot file</span>
 <span class="go">  -o RST_FILE, --rst RST_FILE</span>
 <span class="go">                        Output RST file</span>
+<span class="go">  --only EXPRESSION     Expression of tags for Sphinx&#39; `only` directive that surrounds all RST</span>
+<span class="go">                        content. By default, no `only` directive is generated.</span>
 <span class="go">  -p PREFIX, --prefix PREFIX</span>
 <span class="go">                        Overrides the default &#39;QTEST-&#39; prefix.</span>
 <span class="go">  -r [RELATIONSHIPS [RELATIONSHIPS ...]], --relationships [RELATIONSHIPS [RELATIONSHIPS ...]]</span>
@@ -142,6 +144,9 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 </pre></div>
 </div>
 <p>Please read the <a class="reference external" href="https://melexis.github.io/sphinx-traceability-extension/readme.html">documentation of mlx.traceability</a> for additional configuration steps.</p>
+<p>If you use the <code class="docutils literal notranslate"><span class="pre">--only</span></code> input argument, you should also add <a class="reference external" href="https://pypi.org/project/sphinx-selective-exclude/"><code class="docutils literal notranslate"><span class="pre">'sphinx_selective_exclude.eager_only'</span></code></a> to the
+<code class="docutils literal notranslate"><span class="pre">extensions</span></code> list to prevent mlx.traceability from parsing the content and ignoring the effect of the
+<code class="docutils literal notranslate"><span class="pre">only</span></code> directive.</p>
 </section>
 </section>
 
