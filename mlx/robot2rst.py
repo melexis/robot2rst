@@ -81,8 +81,8 @@ def main():
     parser = argparse.ArgumentParser(description='Convert robot test cases to reStructuredText with traceable items.')
     parser.add_argument("-i", "--robot", dest='robot_file', help='Input robot file', required=True,
                         action='store')
-    parser.add_argument("-o", "--rst", dest='rst_file', help='Output RST file', required=True,
-                        action='store')
+    parser.add_argument("-o", "--rst", dest='rst_file', required=True,
+                        action='store', help='Output RST file, e.g. my_component_qtp.rst')
     parser.add_argument("--only", dest="expression", default="",
                         help="Expression of tags for Sphinx' `only` directive that surrounds all RST content. "
                         "By default, no `only` directive is generated.")
