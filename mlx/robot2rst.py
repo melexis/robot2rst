@@ -79,14 +79,14 @@ def _tweak_prefix(prefix):
 def main():
     '''Main entry point for script: parse arguments and execute'''
     parser = argparse.ArgumentParser(description='Convert robot test cases to reStructuredText with traceable items.')
-    parser.add_argument("-i", "--robot", dest='robot_file', help='Input robot file', required=True,
-                        action='store')
+    parser.add_argument("-i", "--robot", dest='robot_file', required=True,
+                        help='Input robot file')
     parser.add_argument("-o", "--rst", dest='rst_file', required=True,
-                        action='store', help='Output RST file, e.g. my_component_qtp.rst')
+                        help='Output RST file, e.g. my_component_qtp.rst')
     parser.add_argument("--only", dest="expression", default="",
                         help="Expression of tags for Sphinx' `only` directive that surrounds all RST content. "
                         "By default, no `only` directive is generated.")
-    parser.add_argument("-p", "--prefix", action='store', default='QTEST-',
+    parser.add_argument("-p", "--prefix", default='QTEST-',
                         help="Overrides the default 'QTEST-' prefix.")
     parser.add_argument("-r", "--relationships", nargs='*',
                         help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
