@@ -3,7 +3,8 @@ Example usage
 =============
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
+    :glob:
 
     requirements
-    example_usage
+    *_qtp
