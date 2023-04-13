@@ -5,7 +5,7 @@ recursive-include doc *.py
 recursive-include doc *.robot
 recursive-include doc *.rst
 recursive-include doc Makefile
-exclude doc/source/example_usage.rst
+exclude doc/source/*_qtp.rst
 exclude mlx/__robot2rst_version__.py
 
 # added by check_manifest.py

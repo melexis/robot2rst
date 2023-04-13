@@ -105,4 +105,4 @@ venv.bak/
 .mypy_cache/
 
 # generated files
-doc/source/example_usage.rst
+doc/source/*_qtp.rst

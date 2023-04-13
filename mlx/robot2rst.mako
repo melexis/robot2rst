@@ -1,6 +1,11 @@
 <%
 import re
 
+title = suite
+match = re.match(r"(.+)_[qi]tp", suite)
+if match:
+    title = f"{test_type.capitalize()} Test Plan for {match.group(1)}"
+
 def to_traceable_item(name, prefix=''):
     '''
     Converts a name, to the name of a traceabile item
@@ -49,9 +54,9 @@ def generate_body(input_string):
 %>\
 .. _${suite.replace(' ', '_')}:
 
-${'='*len(suite)}
-${suite}
-${'='*len(suite)}
+${'='*len(title)}
+${title}
+${'='*len(title)}
 
 .. contents:: `Contents`
     :depth: 2
