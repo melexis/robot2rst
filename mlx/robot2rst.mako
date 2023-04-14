@@ -41,6 +41,9 @@ def generate_body(input_string):
     indent = ' ' * 4
     newline = '\n'
     line_separator = newline + indent
+    for variable, value in parser.variables.items():
+        if variable in input_string:
+            input_string = input_string.replace(variable, value)
     input_string = input_string.replace(r'\r', '').strip()
     lines = input_string.split(newline)
     intermediate_output = indent
@@ -63,7 +66,7 @@ ${'='*len(title)}
     :local:
 
 
-% for test in tests:
+% for test in parser.tests:
 .. item:: ${to_traceable_item(test.name, prefix)} ${test.name}
 % for relationship, tag_regex, _ in relationship_config:
 <%
