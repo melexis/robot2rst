@@ -51,7 +51,7 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_config, gen_
         robot_file (Path): Path to the input file (.robot).
         rst_file (Path): Path to the output file (.rst).
         prefix (str): Prefix of generated item IDs.
-        relationship_config (list): Dictionary that maps each relationship to the corresponding tag regex.
+        relationship_config (list): List of tuples that contain a relationship, tag_regex and coverage percentage
         gen_matrix (bool): True if traceability matrices are to be generated, False if not.
     """
     return render_template(
