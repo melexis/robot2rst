@@ -4,6 +4,7 @@ import argparse
 import logging
 from textwrap import indent
 from pathlib import Path
+from sys import exit
 
 from mako.exceptions import RichTraceback
 from mako.template import Template
@@ -29,18 +30,20 @@ def render_template(destination, only="", **kwargs):
     template = Template(filename=str(TEMPLATE_FILE))
     try:
         rst_content = template.render(**kwargs)
-    except Exception:
+    except Exception as err:
         traceback = RichTraceback()
-        for entry in traceback.traceback[-2:]:
-            LOGGER.critical("File %s, line %s, in %s: %r", *entry)
+        LOGGER.critical("File %s, line %s, in %s: %r", *traceback.traceback[-1])
+        LOGGER.critical(repr(err))
+        return 1
     else:
         if only:
             rst_content = f".. only:: {only}\n\n{indent(rst_content, ' ' * 4)}"
         with open(str(destination), 'w', encoding='utf-8', newline='\n') as rst_file:
             rst_file.write(rst_content)
+    return 0
 
 
-def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mapping, gen_matrix, **kwargs):
+def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_config, gen_matrix, **kwargs):
     """
     Calls mako template function and passes all needed parameters.
 
@@ -48,15 +51,15 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_to_tag_mappi
         robot_file (Path): Path to the input file (.robot).
         rst_file (Path): Path to the output file (.rst).
         prefix (str): Prefix of generated item IDs.
-        relationship_to_tag_mapping (dict): Dictionary that maps each relationship to the corresponding tag regex.
+        relationship_config (list): Dictionary that maps each relationship to the corresponding tag regex.
         gen_matrix (bool): True if traceability matrices are to be generated, False if not.
     """
-    render_template(
+    return render_template(
         rst_file,
         tests=extract_tests(str(robot_file.resolve(strict=True))),
         suite=rst_file.stem,
         prefix=prefix,
-        relationship_to_tag_mapping=relationship_to_tag_mapping,
+        relationship_config=relationship_config,
         gen_matrix=gen_matrix,
         **kwargs,
     )
@@ -94,6 +97,8 @@ def main():
     parser.add_argument("-t", "--tags", nargs='*',
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
+    parser.add_argument("-c", "--coverage", nargs='*',
+                        help="Minumum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
     parser.add_argument("--type", default='q',
                         help="Give value that starts with 'q' or 'i' (case-insensitive) to explicitly define "
                              "the type of test: qualification/integration test. The default is 'qualification'.")
@@ -102,14 +107,6 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
     args = parser.parse_args()
-    gen_matrix = True
-    if not args.tags:
-        args.tags = ['.*']
-        gen_matrix = False
-        LOGGER.warning("No traceability matrix will be generated because of the use of default tag regex %r.",
-                       args.tags[0])
-    if not args.relationships:
-        args.relationships = ['validates']
 
     type_map = {
         'i': 'integration',
@@ -121,18 +118,32 @@ def main():
         raise ValueError(f"The --type argument is invalid: expected a value that starts with {' or '.join(type_map)}; "
                          f"got {args.type.lower()!r}.")
 
+    relationships = args.relationships if args.relationships else ['validates']
+    coverages = args.coverage if args.coverage else [0] * len(relationships)
     prefix = _tweak_prefix(args.prefix) if args.trim_suffix else args.prefix
+    gen_matrix = True
+    if not args.tags:
+        args.tags = ['.*'] * len(relationships)
+        gen_matrix = False
+        LOGGER.warning("No traceability matrix will be generated because of the use of default tag regex %r.",
+                       args.tags[0])
     tag_regexes = [_tweak_prefix(regex) if args.trim_suffix else regex for regex in args.tags]
-    relationships = args.relationships
 
     if len(relationships) != len(tag_regexes):
         raise ValueError(f"Number of relationships ({len(relationships)}) is not equal to number of tag regexes "
                          f"({len(tag_regexes)}) given.")
-    relationship_to_tag_mapping = dict(zip(relationships, tag_regexes))
+    if len(coverages) != len(tag_regexes):
+        raise ValueError(f"Number of coverage percentages ({len(args.coverage)}) is not equal to number of tag "
+                         f"regexes ({len(tag_regexes)}) given.")
+    relationship_config = [(relationships[i], tag_regexes[i], coverages[i]) for i in range(len(relationships))]
 
-    generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_to_tag_mapping, gen_matrix,
-                         test_type=test_type, only=args.expression)
+    return generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_config,
+                                gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
+
+
+def entrypoint():
+    exit(main())
 
 
 if __name__ == "__main__":
-    main()
+    entrypoint()

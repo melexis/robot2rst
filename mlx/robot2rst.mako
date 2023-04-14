@@ -65,7 +65,7 @@ ${'='*len(title)}
 
 % for test in tests:
 .. item:: ${to_traceable_item(test.name, prefix)} ${test.name}
-% for relationship, tag_regex in relationship_to_tag_mapping.items():
+% for relationship, tag_regex, _ in relationship_config:
 <%
 filtered_tags = [tag for tag in test.tags if re.search(tag_regex, tag)]
 %>\
@@ -84,7 +84,7 @@ ${generate_body(str(test.doc))}
 Traceability Matrix
 ===================
 
-% for relationship, tag_regex in relationship_to_tag_mapping.items():
+% for relationship, tag_regex, coverage in relationship_config:
 The below table traces the ${test_type} test cases to the ${relationship} requirements.
 
 .. item-matrix:: Linking these ${test_type} test cases to the ${relationship} requirements
@@ -96,6 +96,9 @@ The below table traces the ${test_type} test cases to the ${relationship} requir
     :stats:
     :group: top
     :nocaptions:
+    % if coverage:
+    :coverage: >= ${coverage}
+    % endif
 
 % endfor
 % endif
