@@ -1,4 +1,3 @@
-#from ast import NodeVisitor
 from collections import namedtuple
 
 from robot.api import get_model, Token
