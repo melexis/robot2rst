@@ -2,9 +2,9 @@
 ''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
+import sys
 from textwrap import indent
 from pathlib import Path
-from sys import exit
 
 from mako.exceptions import RichTraceback
 from mako.template import Template
@@ -142,7 +142,7 @@ def main():
 
 
 def entrypoint():
-    exit(main())
+    sys.exit(main())
 
 
 if __name__ == "__main__":
