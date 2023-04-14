@@ -3,14 +3,17 @@ Documentation    Example using the space separated plain text format.
 Library          OperatingSystem
 
 *** Variables ***
-${MESSAGE}       Hello, world!
+${NAD}    0x63
+${MESSAGE}       Hello,
+...    world!
 
 *** Test Cases ***
 First Test
-    [Documentation]     Thorough and relatively lengthy documentation for the first example
-    ...  test case.
+    [Documentation]     Thorough and relatively lengthy documentation for the example test case that
+    ...  logs ${MESSAGE} and ${NAD}.
     [Tags]              SWRQT-SOME_RQT  ANOTHER-TAG  SWRQT-OTHER_RQT  SYSRQT-SOME_SYSTEM_RQT
                         Log    ${MESSAGE}
+                        Log    ${NAD}
                         My Keyword    /tmp
 
 Undocumented Test
