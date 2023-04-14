@@ -123,7 +123,7 @@ def main():
     prefix = _tweak_prefix(args.prefix) if args.trim_suffix else args.prefix
     gen_matrix = True
     if not args.tags:
-        args.tags = ['.*'] * len(relationships)
+        args.tags = ['.*']  # only one relationship shall be used
         gen_matrix = False
         LOGGER.warning("No traceability matrix will be generated because of the use of default tag regex %r.",
                        args.tags[0])
