@@ -131,10 +131,10 @@ def main():
 
     if len(relationships) != len(tag_regexes):
         raise ValueError(f"Number of relationships ({len(relationships)}) is not equal to number of tag regexes "
-                         f"({len(tag_regexes)}) given.")
-    if len(coverages) != len(tag_regexes):
-        raise ValueError(f"Number of coverage percentages ({len(args.coverage)}) is not equal to number of tag "
-                         f"regexes ({len(tag_regexes)}) given.")
+                         f"({len(tag_regexes)}).")
+    if len(relationships) != len(coverages):
+        raise ValueError(f"Number of relationships ({len(relationships)}) is not equal to number of coverage "
+                         f"percentages ({len(coverages)}).")
     relationship_config = [(relationships[i], tag_regexes[i], coverages[i]) for i in range(len(relationships))]
 
     return generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_config,
