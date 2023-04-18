@@ -3,7 +3,7 @@ Documentation    Example using the space separated plain text format.
 Library          OperatingSystem
 
 *** Variables ***
-${NAD}    0x63
+${NAD}    ${0x63}
 ${MESSAGE}       Hello,
 ...    world!
 
