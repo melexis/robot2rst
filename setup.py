@@ -44,8 +44,8 @@ setup(
     keywords=['robot', 'robotframework', 'sphinx', 'traceability'],
     entry_points={
         'console_scripts': [
-            'mlx.robot2rst = mlx.robot2rst:main',
-            'robot2rst = mlx.robot2rst:main',
+            'mlx.robot2rst = mlx.robot2rst:entrypoint',
+            'robot2rst = mlx.robot2rst:entrypoint',
         ]
     },
 )

@@ -34,7 +34,8 @@ Usage
 
 .. code-block:: console
 
-    robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- --tags SWRQT- SYSRQT- --relationships validates ext_toolname
+    robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- \
+        --tags SWRQT- SYSRQT- --relationships validates ext_toolname --coverage 100 66.66
 
     $ robot2rst --help
 
@@ -44,27 +45,31 @@ Usage
 
     Convert robot test cases to reStructuredText with traceable items.
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       -i ROBOT_FILE, --robot ROBOT_FILE
                             Input robot file
       -o RST_FILE, --rst RST_FILE
-                            Output RST file
+                            Output RST file, e.g. my_component_qtp.rst
       --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all RST
                             content. By default, no `only` directive is generated.
       -p PREFIX, --prefix PREFIX
                             Overrides the default 'QTEST-' prefix.
-      -r [RELATIONSHIPS [RELATIONSHIPS ...]], --relationships [RELATIONSHIPS [RELATIONSHIPS ...]]
+      -r [RELATIONSHIPS ...], --relationships [RELATIONSHIPS ...]
                             Name(s) of the relationship(s) used to link to items in Tags section.
                             The default value is 'validates'.
-      -t [TAGS [TAGS ...]], --tags [TAGS [TAGS ...]]
-                            Regex(es) for matching tags to add a relationship link for. All tags get
-                            matched by default.
+      -t [TAGS ...], --tags [TAGS ...]
+                            Regex(es) for matching tags to add a relationship link for. All tags
+                            get matched by default.
+      -c [COVERAGE ...], --coverage [COVERAGE ...]
+                            Minumum coverage percentages for the item-matrix(es); 1 value per tag
+                            in -t, --tags.
       --type TYPE           Give value that starts with 'q' or 'i' (case-insensitive) to
-                            explicitly define the type of test: qualification/integration test. The
-                            default is 'qualification'.
+                            explicitly define the type of test: qualification/integration test.
+                            The default is 'qualification'.
       --trim-suffix         If the suffix of any prefix or --tags argument ends with '_-' it gets
                             trimmed to '-'.
+
 
 -------------
 Configuration
