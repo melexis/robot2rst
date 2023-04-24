@@ -1,3 +1,4 @@
+import re
 from collections import namedtuple
 
 from robot.api import get_model, Token
@@ -35,6 +36,9 @@ class ParserApplication(ModelVisitor):
             if getattr(element, 'type') == Token.VARIABLE:
                 name = element.get_value(Token.VARIABLE)
                 value = ' '.join(element.get_values(Token.ARGUMENT))
+                match = re.fullmatch(r"\${(.+)}", value)
+                if match:
+                    value = match.group(1)
                 self.variables[name] = value
 
     def visit_TestCase(self, node):
