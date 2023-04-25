@@ -9,7 +9,7 @@ from pathlib import Path
 from mako.exceptions import RichTraceback
 from mako.template import Template
 
-from .robot_parser import extract_tests
+from .robot_parser import ParserApplication
 
 TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 LOGGER = logging.getLogger(__name__)
@@ -43,12 +43,12 @@ def render_template(destination, only="", **kwargs):
     return 0
 
 
-def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_config, gen_matrix, **kwargs):
+def generate_robot_2_rst(parser, rst_file, prefix, relationship_config, gen_matrix, **kwargs):
     """
     Calls mako template function and passes all needed parameters.
 
     Args:
-        robot_file (Path): Path to the input file (.robot).
+        parser (ParserApplication): Parser with data extracted from the .robot file
         rst_file (Path): Path to the output file (.rst).
         prefix (str): Prefix of generated item IDs.
         relationship_config (list): List of tuples that contain a relationship, tag_regex and coverage percentage
@@ -56,7 +56,7 @@ def generate_robot_2_rst(robot_file, rst_file, prefix, relationship_config, gen_
     """
     return render_template(
         rst_file,
-        tests=extract_tests(str(robot_file.resolve(strict=True))),
+        parser=parser,
         suite=rst_file.stem,
         prefix=prefix,
         relationship_config=relationship_config,
@@ -137,7 +137,9 @@ def main():
                          f"percentages ({len(coverages)}).")
     relationship_config = [(relationships[i], tag_regexes[i], coverages[i]) for i in range(len(relationships))]
 
-    return generate_robot_2_rst(Path(args.robot_file), Path(args.rst_file), prefix, relationship_config,
+    parser = ParserApplication(Path(args.robot_file))
+    parser.run()
+    return generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
                                 gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
 
 

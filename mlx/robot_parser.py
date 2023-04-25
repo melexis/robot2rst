@@ -1,42 +1,51 @@
-from ast import NodeVisitor
+import re
 from collections import namedtuple
 
 from robot.api import get_model, Token
+from robot.parsing import ModelVisitor
 
 
-def extract_tests(robot_file):
-    """ Extracts all useful information from the tests in the .robot file.
+class ParserApplication(ModelVisitor):
+    """ Class used to extract all useful info from the .robot file.
 
-    Args:
-        robot_file (str): Path to the .robot file.
+    See https://robot-framework.readthedocs.io/en/v6.0.2/autodoc/robot.api.html#inspecting-model
 
-    Returns:
-        list: List of objects with attributes name (str), doc (str) and tags (list).
-    """
-    model = get_model(robot_file)
-    parser = TestCaseParser()
-    parser.visit(model)
-    return parser.tests
-
-
-class TestCaseParser(NodeVisitor):
-    """ Class used to extract all useful info from test cases.
-
-    See https://robot-framework.readthedocs.io/en/latest/autodoc/robot.parsing.html#parsing-data-to-model
+    Attributes:
+        tests (list): List of objects with attributes name (str), doc (str) and tags (list).
+        variables (dict): Dictionary mapping variables, e.g. '${MESSAGE}', to their values
     """
     TestAttributes = namedtuple('TestAttributes', 'name doc tags')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, robot_file, *args, **kwargs):
+        """ Constructor
+
+        Args:
+            robot_file (Path): Path to the .robot file.
+        """
         super().__init__(*args, **kwargs)
+        self.robot_file = str(robot_file.resolve(strict=True))
+        self.model = get_model(self.robot_file)
         self.tests = []
+        self.variables = {}
+
+    def run(self):
+        self.visit(self.model)
+
+    def visit_VariableSection(self, node):
+        for element in node.body:
+            if getattr(element, 'type') == Token.VARIABLE:
+                name = element.get_value(Token.VARIABLE)
+                value = ' '.join(element.get_values(Token.ARGUMENT))
+                match = re.fullmatch(r"\${(.+)}", value)
+                if match:
+                    value = match.group(1)
+                self.variables[name] = value
 
     def visit_TestCase(self, node):
         doc = ''
         tags = []
         for element in node.body:
-            if not hasattr(element, 'type'):
-                continue
-            if element.type == Token.DOCUMENTATION:
+            if getattr(element, 'type') == Token.DOCUMENTATION:
                 in_docstring = False
                 previous_token = None
                 for token in element.tokens:
