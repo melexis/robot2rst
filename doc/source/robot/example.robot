@@ -3,14 +3,15 @@ Documentation    Example using the space separated plain text format.
 Library          OperatingSystem
 
 *** Variables ***
+${NAMES}   Create List   First Name  Family Name  Email
 ${NAD}    ${0x63}
-${MESSAGE}       Hello,
+${MESSAGE}     Hello,
 ...    world!
 
 *** Test Cases ***
 First Test
     [Documentation]     Thorough and relatively lengthy documentation for the example test case that
-    ...  logs ${MESSAGE} and ${NAD}.
+    ...  logs ${MESSAGE} and ${NAD} and ${NAMES}.
     [Tags]              SWRQT-SOME_RQT  ANOTHER-TAG  SWRQT-OTHER_RQT  SYSRQT-SOME_SYSTEM_RQT
                         Log    ${MESSAGE}
                         Log    ${NAD}
@@ -31,10 +32,10 @@ Test with documentation in RST syntax
 
 Another Test
     [Documentation]
-    ...  Short documentation string.
+    ...  Test case with for-loop.
     [Tags]              RQT-SOME_RQT  SYSRQT-SOME_SYSTEM_RQT
-                        Log    ${MESSAGE}
-                        My Keyword    /tmp
+                        FOR     ${var}  IN  @{NAMES}
+                                Log     ${var}
 
 *** Keywords ***
 My Keyword

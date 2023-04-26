@@ -33,7 +33,8 @@ class ParserApplication(ModelVisitor):
 
     def visit_VariableSection(self, node):
         for element in node.body:
-            if getattr(element, 'type') == Token.VARIABLE:
+            element_type = getattr(element, 'type', None)
+            if element_type == Token.VARIABLE:
                 name = element.get_value(Token.VARIABLE)
                 value = ' '.join(element.get_values(Token.ARGUMENT))
                 match = re.fullmatch(r"\${(.+)}", value)
@@ -45,7 +46,8 @@ class ParserApplication(ModelVisitor):
         doc = ''
         tags = []
         for element in node.body:
-            if getattr(element, 'type') == Token.DOCUMENTATION:
+            element_type = getattr(element, 'type', None)
+            if element_type == Token.DOCUMENTATION:
                 in_docstring = False
                 previous_token = None
                 for token in element.tokens:
@@ -59,7 +61,7 @@ class ParserApplication(ModelVisitor):
                     elif token.type == Token.DOCUMENTATION:
                         in_docstring = True
                     previous_token = token
-            elif element.type == Token.TAGS:
+            elif element_type == Token.TAGS:
                 tags = [el.value for el in element.tokens if el.type == Token.ARGUMENT]
 
         self.tests.append(self.TestAttributes(node.name, doc, tags))
