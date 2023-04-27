@@ -16,7 +16,7 @@
         :ext_toolname: SYSRQT-SOME_SYSTEM_RQT
 
         Thorough and relatively lengthy documentation for the example test case that
-        logs Hello, world! and 0x63.
+        logs Hello, world! and 0x63 and Create List First Name Family Name Email.
 
     .. item:: QTEST-UNDOCUMENTED_TEST Undocumented Test
 
@@ -33,7 +33,7 @@
     .. item:: QTEST-ANOTHER_TEST Another Test
         :ext_toolname: SYSRQT-SOME_SYSTEM_RQT
 
-        Short documentation string.
+        Test case with for-loop.
 
 
     Traceability Matrix
