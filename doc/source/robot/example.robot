@@ -9,7 +9,7 @@ ${MESSAGE}     Hello,
 ...    world!
 
 *** Test Cases ***
-First, Test
+First Test
     [Documentation]     Thorough and relatively lengthy documentation for the example test case that
     ...  logs ${MESSAGE} and ${NAD} and ${NAMES}.
     [Tags]              SWRQT-SOME_RQT  ANOTHER-TAG  SWRQT-OTHER_RQT  SYSRQT-SOME_SYSTEM_RQT
@@ -36,6 +36,10 @@ Another Test
     [Tags]              RQT-SOME_RQT  SYSRQT-SOME_SYSTEM_RQT
                         FOR     ${var}  IN  @{NAMES}
                                 Log     ${var}
+
+Comp1: testing 'Special" characters & prefix
+    [Documentation]     The item ID will contain COMP1-SPECIAL_CHARACTERS_AND_PREFIX.
+                        Log     Special characters in test case names are supported but not recommended.
 
 *** Keywords ***
 My Keyword
