@@ -9,7 +9,7 @@ ${MESSAGE}     Hello,
 ...    world!
 
 *** Test Cases ***
-First Test
+First, Test
     [Documentation]     Thorough and relatively lengthy documentation for the example test case that
     ...  logs ${MESSAGE} and ${NAD} and ${NAMES}.
     [Tags]              SWRQT-SOME_RQT  ANOTHER-TAG  SWRQT-OTHER_RQT  SYSRQT-SOME_SYSTEM_RQT
@@ -20,7 +20,7 @@ First Test
 Undocumented Test
                         Should Be Equal     ${MESSAGE}    Hello, world!
 
-Test with documentation in RST syntax
+Test with documentation (in "RST" syntax)
     [Documentation]     An example docstring for which it's important its line endings get preserved.
     ...
     ...  - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
