@@ -20,7 +20,7 @@ First Test
 Undocumented Test
                         Should Be Equal     ${MESSAGE}    Hello, world!
 
-Test with documentation (in "RST" syntax)
+Test with documentation in RST syntax
     [Documentation]     An example docstring for which it's important its line endings get preserved.
     ...
     ...  - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
@@ -37,8 +37,8 @@ Another Test
                         FOR     ${var}  IN  @{NAMES}
                                 Log     ${var}
 
-Comp1: testing 'Special" characters & prefix
-    [Documentation]     The item ID will contain COMP1-TESTING_SPECIAL_CHARACTERS_AND_PREFIX.
+Comp1: testing 'Special" characters & prefix (with brackets)
+    [Documentation]     The item ID will contain COMP1-TESTING_SPECIAL_CHARACTERS_AND_PREFIX_WITH_BRACKETS.
                         Log     Special characters in test case names are supported but not recommended.
 
 *** Keywords ***
