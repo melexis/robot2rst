@@ -37,6 +37,10 @@ Another Test
                         FOR     ${var}  IN  @{NAMES}
                                 Log     ${var}
 
+Comp1: testing 'Special" characters & prefix (with brackets)
+    [Documentation]     The item ID will contain COMP1-TESTING_SPECIAL_CHARACTERS_AND_PREFIX_WITH_BRACKETS.
+                        Log     Special characters in test case names are supported but not recommended.
+
 *** Keywords ***
 My Keyword
     [Documentation]     My keyword's documentation string.

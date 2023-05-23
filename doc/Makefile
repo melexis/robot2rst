@@ -11,7 +11,7 @@ ROBOT2RST	  = robot2rst
 ROBOT2RST_OPTS += -i $(SOURCEDIR)/robot/example.robot
 ROBOT2RST_OPTS += -o $(SOURCEDIR)/example_usage_qtp.rst
 ROBOT2RST_OPTS += -t ^SWRQT- ^SYSRQT-
-ROBOT2RST_OPTS += -c 100 50.0
+ROBOT2RST_OPTS += -c 100 40.0
 ROBOT2RST_OPTS += -r validates ext_toolname
 ROBOT2RST_OPTS += --only FLASH
 
