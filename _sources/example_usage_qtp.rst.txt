@@ -35,6 +35,10 @@
 
         Test case with for-loop.
 
+    .. item:: QTEST-COMP1-TESTING_SPECIAL_CHARACTERS_AND_PREFIX_WITH_BRACKETS Comp1: testing 'Special" characters & prefix (with brackets)
+
+        The item ID will contain COMP1-TESTING_SPECIAL_CHARACTERS_AND_PREFIX_WITH_BRACKETS.
+
 
     Traceability Matrix
     ===================
@@ -63,5 +67,5 @@
         :stats:
         :group: top
         :nocaptions:
-        :coverage: >= 50.0
+        :coverage: >= 40.0
 
