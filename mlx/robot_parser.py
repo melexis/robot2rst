@@ -16,17 +16,19 @@ class ParserApplication(ModelVisitor):
     """
     TestAttributes = namedtuple('TestAttributes', 'name doc tags')
 
-    def __init__(self, robot_file, *args, **kwargs):
+    def __init__(self, robot_file, tags_for_inclusion, *args, **kwargs):
         """ Constructor
 
         Args:
             robot_file (Path): Path to the .robot file.
+            include_tags (list): Regexes for matching tags to only include test cases that have at least one matching tag.
         """
         super().__init__(*args, **kwargs)
         self.robot_file = str(robot_file.resolve(strict=True))
         self.model = get_model(self.robot_file)
         self.tests = []
         self.variables = {}
+        self.tags_for_inclusion = tags_for_inclusion
 
     def run(self):
         self.visit(self.model)
@@ -63,5 +65,13 @@ class ParserApplication(ModelVisitor):
                     previous_token = token
             elif element_type == Token.TAGS:
                 tags = [el.value for el in element.tokens if el.type == Token.ARGUMENT]
+        if self.evaluate_inclusion(tags):
+            self.tests.append(self.TestAttributes(node.name, doc, tags))
 
-        self.tests.append(self.TestAttributes(node.name, doc, tags))
+    def evaluate_inclusion(self, tags):
+        for pattern in self.tags_for_inclusion:
+            regexp = re.compile(pattern)
+            for tag in tags:
+                if regexp.search(tag):
+                    return True
+        return not bool(self.tags_for_inclusion)

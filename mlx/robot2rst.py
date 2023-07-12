@@ -97,6 +97,9 @@ def main():
     parser.add_argument("-t", "--tags", nargs='*',
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
+    parser.add_argument("--tags-for-inclusion", nargs='*', default=[],
+                        help="Regex(es) for matching tags. Only test cases that have at least one matching tag are "
+                             "included. All are included by default.")
     parser.add_argument("-c", "--coverage", nargs='*',
                         help="Minumum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
     parser.add_argument("--type", default='q',
@@ -137,7 +140,7 @@ def main():
                          f"percentages ({len(coverages)}).")
     relationship_config = [(relationships[i], tag_regexes[i], coverages[i]) for i in range(len(relationships))]
 
-    parser = ParserApplication(Path(args.robot_file))
+    parser = ParserApplication(Path(args.robot_file), args.tags_for_inclusion)
     parser.run()
     return generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
                                 gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
