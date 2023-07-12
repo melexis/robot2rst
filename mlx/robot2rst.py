@@ -98,8 +98,8 @@ def main():
                         help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
                              "default.")
     parser.add_argument("--tags-for-inclusion", nargs='*', default=[],
-                        help="Regex(es) for matching tags. Only test cases that have at least one matching tag are "
-                             "included. All are included by default.")
+                        help="Regex(es) for matching tags. A test case is included if every regex matches at least "
+                             "one of its tags.")
     parser.add_argument("-c", "--coverage", nargs='*',
                         help="Minumum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
     parser.add_argument("--type", default='q',

@@ -63,8 +63,8 @@ Usage
                             Regex(es) for matching tags to add a relationship link for. All tags
                             get matched by default.
       --tags-for-inclusion [TAGS_FOR_INCLUSION ...]
-                            Regex(es) for matching tags. Only test cases that have at least one
-                            matching tag are included. All are included by default.
+                            Regex(es) for matching tags. A test case is included if every regex
+                            matches at least one of its tags.
       -c [COVERAGE ...], --coverage [COVERAGE ...]
                             Minumum coverage percentages for the item-matrix(es); 1 value per tag
                             in -t, --tags.
