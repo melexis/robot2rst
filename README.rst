@@ -40,7 +40,8 @@ Usage
     $ robot2rst --help
 
     usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]
-                     [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]]
+                     [-r [RELATIONSHIPS ...]] [-t [TAGS ...]]
+                     [--tags-for-inclusion [TAGS_FOR_INCLUSION ...]] [-c [COVERAGE ...]]
                      [--type TYPE] [--trim-suffix]
 
     Convert robot test cases to reStructuredText with traceable items.
@@ -61,6 +62,9 @@ Usage
       -t [TAGS ...], --tags [TAGS ...]
                             Regex(es) for matching tags to add a relationship link for. All tags
                             get matched by default.
+      --tags-for-inclusion [TAGS_FOR_INCLUSION ...]
+                            Regex(es) for matching tags. Only test cases that have at least one
+                            matching tag are included. All are included by default.
       -c [COVERAGE ...], --coverage [COVERAGE ...]
                             Minumum coverage percentages for the item-matrix(es); 1 value per tag
                             in -t, --tags.
