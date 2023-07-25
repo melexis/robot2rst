@@ -66,7 +66,7 @@ Usage
                             Regex(es) for matching tags to filter test cases. A test case is
                             included if every regex matches at least one of its tags.
       -c [COVERAGE ...], --coverage [COVERAGE ...]
-                            Minumum coverage percentages for the item-matrix(es); 1 value per tag
+                            Minimum coverage percentages for the item-matrix(es); 1 value per tag
                             in -t, --tags.
       --type TYPE           Give value that starts with 'q' or 'i' (case-insensitive) to
                             explicitly define the type of test: qualification/integration test.
