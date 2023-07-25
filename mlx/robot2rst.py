@@ -101,7 +101,7 @@ def main():
                         help="Regex(es) for matching tags. A test case is included if every regex matches at least "
                              "one of its tags.")
     parser.add_argument("-c", "--coverage", nargs='*',
-                        help="Minumum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
+                        help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
     parser.add_argument("--type", default='q',
                         help="Give value that starts with 'q' or 'i' (case-insensitive) to explicitly define "
                              "the type of test: qualification/integration test. The default is 'qualification'.")
