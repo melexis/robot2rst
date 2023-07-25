@@ -95,11 +95,11 @@ def main():
                         help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
                              "is 'validates'.")
     parser.add_argument("-t", "--tags", nargs='*',
-                        help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
-                             "default.")
+                        help="Regex(es) for matching tags to treat them as traceable targets via a relationship. "
+                             "All tags get matched by default.")
     parser.add_argument("--tags-for-inclusion", nargs='*', default=[],
-                        help="Regex(es) for matching tags. A test case is included if every regex matches at least "
-                             "one of its tags.")
+                        help="Regex(es) for matching tags to filter test cases. A test case is included if every "
+                             "regex matches at least one of its tags.")
     parser.add_argument("-c", "--coverage", nargs='*',
                         help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
     parser.add_argument("--type", default='q',
