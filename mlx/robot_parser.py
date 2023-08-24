@@ -21,8 +21,8 @@ class ParserApplication(ModelVisitor):
 
         Args:
             robot_file (Path): Path to the .robot file.
-            include_tags (list): Regexes for matching tags. A test case is included if every regex matches at least
-                one of its tags.
+            tags_for_inclusion (list): Regexes for matching tags. A test case is included if every regex matches at
+                least one of its tags.
         """
         super().__init__(*args, **kwargs)
         self.robot_file = str(robot_file.resolve(strict=True))

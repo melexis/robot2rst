@@ -40,9 +40,8 @@ Usage
     $ robot2rst --help
 
     usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]
-                     [-r [RELATIONSHIPS ...]] [-t [TAGS ...]]
-                     [--tags-for-inclusion [TAGS_FOR_INCLUSION ...]] [-c [COVERAGE ...]]
-                     [--type TYPE] [--trim-suffix]
+                     [-r [RELATIONSHIPS ...]] [-t [TAGS ...]] [--include [INCLUDE ...]]
+                     [-c [COVERAGE ...]] [--type TYPE] [--trim-suffix]
 
     Convert robot test cases to reStructuredText with traceable items.
 
@@ -52,8 +51,8 @@ Usage
                             Input robot file
       -o RST_FILE, --rst RST_FILE
                             Output RST file, e.g. my_component_qtp.rst
-      --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all RST
-                            content. By default, no `only` directive is generated.
+      --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all
+                            RST content. By default, no `only` directive is generated.
       -p PREFIX, --prefix PREFIX
                             Overrides the default 'QTEST-' prefix.
       -r [RELATIONSHIPS ...], --relationships [RELATIONSHIPS ...]
@@ -62,7 +61,7 @@ Usage
       -t [TAGS ...], --tags [TAGS ...]
                             Regex(es) for matching tags to treat them as traceable targets via a
                             relationship. All tags get matched by default.
-      --tags-for-inclusion [TAGS_FOR_INCLUSION ...]
+      --include [INCLUDE ...]
                             Regex(es) for matching tags to filter test cases. A test case is
                             included if every regex matches at least one of its tags.
       -c [COVERAGE ...], --coverage [COVERAGE ...]

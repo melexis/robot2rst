@@ -97,7 +97,7 @@ def main():
     parser.add_argument("-t", "--tags", nargs='*',
                         help="Regex(es) for matching tags to treat them as traceable targets via a relationship. "
                              "All tags get matched by default.")
-    parser.add_argument("--tags-for-inclusion", nargs='*', default=[],
+    parser.add_argument("--include", nargs='*', default=[],
                         help="Regex(es) for matching tags to filter test cases. A test case is included if every "
                              "regex matches at least one of its tags.")
     parser.add_argument("-c", "--coverage", nargs='*',
@@ -140,7 +140,7 @@ def main():
                          f"percentages ({len(coverages)}).")
     relationship_config = [(relationships[i], tag_regexes[i], coverages[i]) for i in range(len(relationships))]
 
-    parser = ParserApplication(Path(args.robot_file), args.tags_for_inclusion)
+    parser = ParserApplication(Path(args.robot_file), args.include)
     parser.run()
     return generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
                                 gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
