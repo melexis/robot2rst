@@ -59,11 +59,13 @@ Usage
                             Name(s) of the relationship(s) used to link to items in Tags section.
                             The default value is 'validates'.
       -t [TAGS ...], --tags [TAGS ...]
-                            Regex(es) for matching tags to treat them as traceable targets via a
-                            relationship. All tags get matched by default.
+                            Zero or more Python regexes for matching tags to treat them as
+                            traceable targets via a relationship. All tags get matched by
+                            default.
       --include [INCLUDE ...]
-                            Regex(es) for matching tags to filter test cases. A test case is
-                            included if every regex matches at least one of its tags.
+                            Zero or more Python regexes for matching tags to filter test cases.
+                            If every regex matches at least one of a test case's tags, the test
+                            case is included.
       -c [COVERAGE ...], --coverage [COVERAGE ...]
                             Minimum coverage percentages for the item-matrix(es); 1 value per tag
                             in -t, --tags.
