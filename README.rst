@@ -40,8 +40,8 @@ Usage
     $ robot2rst --help
 
     usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]
-                     [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]]
-                     [--type TYPE] [--trim-suffix]
+                     [-r [RELATIONSHIPS ...]] [-t [TAGS ...]] [--include [INCLUDE ...]]
+                     [-c [COVERAGE ...]] [--type TYPE] [--trim-suffix]
 
     Convert robot test cases to reStructuredText with traceable items.
 
@@ -51,18 +51,23 @@ Usage
                             Input robot file
       -o RST_FILE, --rst RST_FILE
                             Output RST file, e.g. my_component_qtp.rst
-      --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all RST
-                            content. By default, no `only` directive is generated.
+      --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all
+                            RST content. By default, no `only` directive is generated.
       -p PREFIX, --prefix PREFIX
                             Overrides the default 'QTEST-' prefix.
       -r [RELATIONSHIPS ...], --relationships [RELATIONSHIPS ...]
                             Name(s) of the relationship(s) used to link to items in Tags section.
                             The default value is 'validates'.
       -t [TAGS ...], --tags [TAGS ...]
-                            Regex(es) for matching tags to add a relationship link for. All tags
-                            get matched by default.
+                            Zero or more Python regexes for matching tags to treat them as
+                            traceable targets via a relationship. All tags get matched by
+                            default.
+      --include [INCLUDE ...]
+                            Zero or more Python regexes for matching tags to filter test cases.
+                            If every regex matches at least one of a test case's tags, the test
+                            case is included.
       -c [COVERAGE ...], --coverage [COVERAGE ...]
-                            Minumum coverage percentages for the item-matrix(es); 1 value per tag
+                            Minimum coverage percentages for the item-matrix(es); 1 value per tag
                             in -t, --tags.
       --type TYPE           Give value that starts with 'q' or 'i' (case-insensitive) to
                             explicitly define the type of test: qualification/integration test.

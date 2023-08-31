@@ -95,10 +95,13 @@ def main():
                         help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
                              "is 'validates'.")
     parser.add_argument("-t", "--tags", nargs='*',
-                        help="Regex(es) for matching tags to add a relationship link for. All tags get matched by "
-                             "default.")
+                        help="Zero or more Python regexes for matching tags to treat them as traceable targets via a "
+                             "relationship. All tags get matched by default.")
+    parser.add_argument("--include", nargs='*', default=[],
+                        help="Zero or more Python regexes for matching tags to filter test cases. "
+                             "If every regex matches at least one of a test case's tags, the test case is included.")
     parser.add_argument("-c", "--coverage", nargs='*',
-                        help="Minumum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
+                        help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
     parser.add_argument("--type", default='q',
                         help="Give value that starts with 'q' or 'i' (case-insensitive) to explicitly define "
                              "the type of test: qualification/integration test. The default is 'qualification'.")
@@ -137,10 +140,18 @@ def main():
                          f"percentages ({len(coverages)}).")
     relationship_config = [(relationships[i], tag_regexes[i], coverages[i]) for i in range(len(relationships))]
 
-    parser = ParserApplication(Path(args.robot_file))
+    parser = ParserApplication(Path(args.robot_file), args.include)
     parser.run()
-    return generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
-                                gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
+    if parser.tests:
+        exit_code = generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
+                                         gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
+    else:
+        msg = f"robot2rst did not generate {args.rst_file} because {args.robot_file} does not contain any test cases"
+        if args.include:
+            msg += f" with tags matching all regexes {args.include}"
+        LOGGER.info(msg)
+        exit_code = 0
+    return exit_code
 
 
 def entrypoint():
