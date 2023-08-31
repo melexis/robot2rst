@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.3.0 documentation</title>
+  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.4.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.css" type="text/css" />
@@ -38,7 +38,7 @@
             mlx.robot2rst
           </a>
               <div class="version">
-                3.3
+                3.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -110,8 +110,8 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 <span class="gp">$ </span>robot2rst<span class="w"> </span>--help
 
 <span class="go">usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]</span>
-<span class="go">                 [-r [RELATIONSHIPS [RELATIONSHIPS ...]]] [-t [TAGS [TAGS ...]]]</span>
-<span class="go">                 [--type TYPE] [--trim-suffix]</span>
+<span class="go">                 [-r [RELATIONSHIPS ...]] [-t [TAGS ...]] [--include [INCLUDE ...]]</span>
+<span class="go">                 [-c [COVERAGE ...]] [--type TYPE] [--trim-suffix]</span>
 
 <span class="go">Convert robot test cases to reStructuredText with traceable items.</span>
 
@@ -121,18 +121,23 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 <span class="go">                        Input robot file</span>
 <span class="go">  -o RST_FILE, --rst RST_FILE</span>
 <span class="go">                        Output RST file, e.g. my_component_qtp.rst</span>
-<span class="go">  --only EXPRESSION     Expression of tags for Sphinx&#39; `only` directive that surrounds all RST</span>
-<span class="go">                        content. By default, no `only` directive is generated.</span>
+<span class="go">  --only EXPRESSION     Expression of tags for Sphinx&#39; `only` directive that surrounds all</span>
+<span class="go">                        RST content. By default, no `only` directive is generated.</span>
 <span class="go">  -p PREFIX, --prefix PREFIX</span>
 <span class="go">                        Overrides the default &#39;QTEST-&#39; prefix.</span>
 <span class="go">  -r [RELATIONSHIPS ...], --relationships [RELATIONSHIPS ...]</span>
 <span class="go">                        Name(s) of the relationship(s) used to link to items in Tags section.</span>
 <span class="go">                        The default value is &#39;validates&#39;.</span>
 <span class="go">  -t [TAGS ...], --tags [TAGS ...]</span>
-<span class="go">                        Regex(es) for matching tags to add a relationship link for. All tags</span>
-<span class="go">                        get matched by default.</span>
+<span class="go">                        Zero or more Python regexes for matching tags to treat them as</span>
+<span class="go">                        traceable targets via a relationship. All tags get matched by</span>
+<span class="go">                        default.</span>
+<span class="go">  --include [INCLUDE ...]</span>
+<span class="go">                        Zero or more Python regexes for matching tags to filter test cases.</span>
+<span class="go">                        If every regex matches at least one of a test case&#39;s tags, the test</span>
+<span class="go">                        case is included.</span>
 <span class="go">  -c [COVERAGE ...], --coverage [COVERAGE ...]</span>
-<span class="go">                        Minumum coverage percentages for the item-matrix(es); 1 value per tag</span>
+<span class="go">                        Minimum coverage percentages for the item-matrix(es); 1 value per tag</span>
 <span class="go">                        in -t, --tags.</span>
 <span class="go">  --type TYPE           Give value that starts with &#39;q&#39; or &#39;i&#39; (case-insensitive) to</span>
 <span class="go">                        explicitly define the type of test: qualification/integration test.</span>
