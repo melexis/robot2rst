@@ -98,8 +98,8 @@ def main():
                         help="Zero or more Python regexes for matching tags to treat them as traceable targets via a "
                              "relationship. All tags get matched by default.")
     parser.add_argument("--include", nargs='*', default=[],
-                        help="Zero or more Python regexes for matching tags to filter test cases. A test case is "
-                             "included if every regex matches at least one of its tags.")
+                        help="Zero or more Python regexes for matching tags to filter test cases. "
+                             "If every regex matches at least one of a test case's tags, the test case is included.")
     parser.add_argument("-c", "--coverage", nargs='*',
                         help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
     parser.add_argument("--type", default='q',
