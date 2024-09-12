@@ -1,24 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.4.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=66b59bf7" />
+      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.css" />
+
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.js"></script>
-        <script src="_static/traceability.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=c1362a89"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.js"></script>
+      <script src="_static/traceability-11.6.0.min.js?v=8c8bbf8b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -38,7 +38,7 @@
             mlx.robot2rst
           </a>
               <div class="version">
-                3.4
+                3.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -82,11 +82,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <a class="reference external image-reference" href="https://github.com/melexis/robot2rst/actions/workflows/python-package.yml"><img alt="Build status" src="https://github.com/melexis/robot2rst/actions/workflows/python-package.yml/badge.svg?branch=master" /></a>
-<a class="reference external image-reference" href="https://melexis.github.io/robot2rst/"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-published-brightgreen.svg" /></a>
-<a class="reference external image-reference" href="https://github.com/melexis/robot2rst/issues"><img alt="Contributions welcome" src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" /></a>
+  <a class="reference external image-reference" href="https://github.com/melexis/robot2rst/actions/workflows/python-package.yml"><img alt="Build status" src="https://github.com/melexis/robot2rst/actions/workflows/python-package.yml/badge.svg?branch=master" />
+</a>
+<a class="reference external image-reference" href="https://melexis.github.io/robot2rst/"><img alt="Documentation" src="https://img.shields.io/badge/Documentation-published-brightgreen.svg" />
+</a>
+<a class="reference external image-reference" href="https://github.com/melexis/robot2rst/issues"><img alt="Contributions welcome" src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" />
+</a>
 <section id="documentation-robot2rst">
-<h1>Documentation robot2rst<a class="headerlink" href="#documentation-robot2rst" title="Permalink to this heading"></a></h1>
+<h1>Documentation robot2rst<a class="headerlink" href="#documentation-robot2rst" title="Link to this heading"></a></h1>
 <p>This script can convert your .robot files from Robot Framework to reStructuredText (.rst) files with traceable items.</p>
 <nav class="contents local" id="contents">
 <p class="topic-title"><cite>Contents</cite></p>
@@ -97,13 +100,13 @@
 </ul>
 </nav>
 <section id="goal">
-<h2><a class="toc-backref" href="#id1" role="doc-backlink">Goal</a><a class="headerlink" href="#goal" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Goal</a><a class="headerlink" href="#goal" title="Link to this heading"></a></h2>
 <p>This script allows you to connect your requirements to test cases via the <a class="reference external" href="https://pypi.org/project/mlx.traceability/">mlx.traceability</a> Sphinx extension.
 Test cases get converted to traceable items. The documentation of each test gets used to generate the body of the item.
 Test case names get converted to item IDs with a configurable prefix. Tags can be used to link to other traceable items.</p>
 </section>
 <section id="usage">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Usage</a><a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Usage</a><a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- \</span>
 <span class="go">    --tags SWRQT- SYSRQT- --relationships validates ext_toolname --coverage 100 66.66</span>
 
@@ -148,7 +151,7 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 </div>
 </section>
 <section id="configuration">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Configuration</a><a class="headerlink" href="#configuration" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Configuration</a><a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
 <p>To include the script’s output in your documentation you want to add the aforementioned extension to your
 <code class="docutils literal notranslate"><span class="pre">extensions</span></code> list in your <em>conf.py</em> like so:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span>
