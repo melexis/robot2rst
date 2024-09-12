@@ -22,7 +22,7 @@ copyright = '2020, Jasper Craeghs'
 authors = ['Stein Heselmans', 'Jasper Craeghs']
 
 # The full version, including alpha/beta/rc tags
-release = distribution('mlx.xunit2rst').version
+release = distribution('mlx.robot2rst').version
 version = '.'.join(release.split('.')[:2])
 
 man_pages = [
