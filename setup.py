@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+from setuptools import find_namespace_packages, setup
 
 project_url = 'https://github.com/melexis/robot2rst'
 
@@ -8,7 +8,6 @@ requires = ['robotframework>=3.2', 'mako']
 
 setup(
     name='mlx.robot2rst',
-    use_scm_version={'write_to': 'mlx/__robot2rst_version__.py'},
     url=project_url,
     author='Jasper Craeghs',
     author_email='jce@melexis.com',
@@ -35,17 +34,16 @@ setup(
         'Topic :: Utilities',
     ],
     platforms='any',
-    packages=find_packages(exclude=['tests', 'doc']),
+    packages=find_namespace_packages(where=".", exclude=("doc.*", "doc", "build*")),
+    package_dir={"": "."},
     include_package_data=True,
     install_requires=requires,
-    setup_requires=['setuptools_scm'],
     python_requires='>=3.8',
-    namespace_packages=['mlx'],
     keywords=['robot', 'robotframework', 'sphinx', 'traceability'],
     entry_points={
         'console_scripts': [
-            'mlx.robot2rst = mlx.robot2rst:entrypoint',
-            'robot2rst = mlx.robot2rst:entrypoint',
+            'mlx.robot2rst = mlx.robot2rst.robot2rst:entrypoint',
+            'robot2rst = mlx.robot2rst.robot2rst:entrypoint',
         ]
     },
 )
