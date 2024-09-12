@@ -1,0 +1,18 @@
+sphinx:
+  enabled: true
+  min: 1
+  max: 1
+  exclude:
+    - 'WARNING: cannot cache unpickable configuration value: .traceability_attributes_sort. \(because it contains a function, class, or module object\)'
+doxygen:
+  enabled: false
+junit:
+  enabled: false
+xmlrunner:
+  enabled: false
+coverity:
+  enabled: false
+robot:
+  enabled: false
+polyspace:
+  enabled: false

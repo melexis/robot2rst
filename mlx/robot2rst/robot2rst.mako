@@ -21,13 +21,13 @@ def to_traceable_item(name, prefix=''):
     # Move to capitals
     name = name.upper()
     # Replace ' : ' (or alike) by '-'
-    name = re.sub('\s*:\s*', '-', name)
+    name = re.sub(r'\s*:\s*', '-', name)
     # Replace '&' by 'AND'
     name = name.replace('&', 'AND')
     # Remove other special characters
-    name = re.sub('[^\w\s_-]', '', name)
+    name = re.sub(r'[^\w\s_-]', '', name)
     # Replace spaces with single underscore
-    name = re.sub('\s+', '_', name)
+    name = re.sub(r'\s+', '_', name)
     return name
 
 

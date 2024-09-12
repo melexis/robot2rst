@@ -6,7 +6,8 @@
 
 import os
 import mlx.traceability
-from pkg_resources import get_distribution
+from importlib.metadata import distribution
+from pathlib import Path
 
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -21,7 +22,7 @@ copyright = '2020, Jasper Craeghs'
 authors = ['Stein Heselmans', 'Jasper Craeghs']
 
 # The full version, including alpha/beta/rc tags
-release = get_distribution('mlx.robot2rst').version
+release = distribution('mlx.robot2rst').version
 version = '.'.join(release.split('.')[:2])
 
 man_pages = [
@@ -71,7 +72,9 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = [os.path.join(os.path.dirname(mlx.traceability.__file__), 'assets')]
+html_static_path = [
+    str(Path(mlx.traceability.__file__).parent / 'assets'),
+]
 
 
 def setup(app):
