@@ -25,7 +25,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -40,7 +39,7 @@ setup(
     include_package_data=True,
     install_requires=requires,
     setup_requires=['setuptools_scm'],
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     namespace_packages=['mlx'],
     keywords=['robot', 'robotframework', 'sphinx', 'traceability'],
     entry_points={
