@@ -6,7 +6,10 @@
 
 import os
 import mlx.traceability
-from pkg_resources import get_distribution
+from importlib.metadata import distribution
+from pathlib import Path
+
+import mlx.traceability
 
 # -- Path setup --------------------------------------------------------------
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -21,7 +24,7 @@ copyright = '2020, Jasper Craeghs'
 authors = ['Stein Heselmans', 'Jasper Craeghs']
 
 # The full version, including alpha/beta/rc tags
-release = get_distribution('mlx.robot2rst').version
+release = distribution('mlx.xunit2rst').version
 version = '.'.join(release.split('.')[:2])
 
 man_pages = [
