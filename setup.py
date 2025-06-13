@@ -37,6 +37,9 @@ setup(
     packages=find_namespace_packages(where=".", exclude=("doc.*", "doc", "build*")),
     package_dir={"": "."},
     include_package_data=True,
+    package_data={
+        'mlx.robot2rst': ['*.mako'],
+    },
     install_requires=requires,
     python_requires='>=3.8',
     keywords=['robot', 'robotframework', 'sphinx', 'traceability'],
