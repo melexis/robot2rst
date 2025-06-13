@@ -12,7 +12,7 @@ from mako.template import Template
 from .robot_parser import ParserApplication
 
 TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger('robot2rst')
 
 
 def render_template(destination, only="", **kwargs):
