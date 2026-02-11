@@ -2,6 +2,7 @@
 ''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
+import os
 import sys
 from textwrap import indent
 from pathlib import Path
@@ -54,6 +55,7 @@ def generate_robot_2_rst(parser, rst_file, prefix, relationship_config, gen_matr
         relationship_config (list): List of tuples that contain a relationship, tag_regex and coverage percentage
         gen_matrix (bool): True if traceability matrices are to be generated, False if not.
     """
+    env_vars = dict(os.environ)
     return render_template(
         rst_file,
         parser=parser,
@@ -61,6 +63,7 @@ def generate_robot_2_rst(parser, rst_file, prefix, relationship_config, gen_matr
         prefix=prefix,
         relationship_config=relationship_config,
         gen_matrix=gen_matrix,
+        **env_vars,
         **kwargs,
     )
 
