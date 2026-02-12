@@ -55,7 +55,6 @@ def generate_robot_2_rst(parser, rst_file, prefix, relationship_config, gen_matr
         relationship_config (list): List of tuples that contain a relationship, tag_regex and coverage percentage
         gen_matrix (bool): True if traceability matrices are to be generated, False if not.
     """
-    env_vars = dict(os.environ)
     return render_template(
         rst_file,
         parser=parser,
@@ -63,7 +62,6 @@ def generate_robot_2_rst(parser, rst_file, prefix, relationship_config, gen_matr
         prefix=prefix,
         relationship_config=relationship_config,
         gen_matrix=gen_matrix,
-        **env_vars,
         **kwargs,
     )
 
@@ -145,6 +143,7 @@ def main():
 
     parser = ParserApplication(Path(args.robot_file), args.include)
     parser.run()
+
     if parser.tests:
         exit_code = generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
                                          gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
