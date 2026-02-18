@@ -2,7 +2,6 @@
 ''' Script to convert a robot test file to a reStructuredText file with traceable items '''
 import argparse
 import logging
-import os
 import sys
 from textwrap import indent
 from pathlib import Path
