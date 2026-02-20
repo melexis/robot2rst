@@ -142,7 +142,6 @@ def main():
 
     parser = ParserApplication(Path(args.robot_file), args.include)
     parser.run()
-
     if parser.tests:
         exit_code = generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
                                          gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
