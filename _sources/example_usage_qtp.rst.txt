@@ -16,7 +16,7 @@
         :ext_toolname: SYSRQT-SOME_SYSTEM_RQT
 
         Thorough and relatively lengthy documentation for the example test case that
-        logs Hello, world! and 0x63 and Create List First Name Family Name Email.
+        logs Hello, world! and 0x63 and Create List First Name Family Name Email. Test env variable
 
     .. item:: QTEST-UNDOCUMENTED_TEST Undocumented Test
 
