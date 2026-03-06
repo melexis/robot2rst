@@ -6,6 +6,10 @@ project_url = 'https://github.com/melexis/robot2rst'
 
 requires = ['robotframework>=3.2', 'mako']
 
+extras_require = {
+    'stylecheck': ['docstrfmt'],
+}
+
 setup(
     name='mlx.robot2rst',
     url=project_url,
@@ -41,6 +45,7 @@ setup(
         'mlx.robot2rst': ['*.mako'],
     },
     install_requires=requires,
+    extras_require=extras_require,
     python_requires='>=3.8',
     keywords=['robot', 'robotframework', 'sphinx', 'traceability'],
     entry_points={

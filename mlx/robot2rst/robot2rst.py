@@ -10,6 +10,7 @@ from mako.exceptions import RichTraceback
 from mako.template import Template
 
 from .robot_parser import ParserApplication
+from .style_checker import StyleChecker
 
 TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 LOGGER = logging.getLogger('robot2rst')
@@ -84,11 +85,15 @@ def main():
     parser = argparse.ArgumentParser(description='Convert robot test cases to reStructuredText with traceable items.')
     parser.add_argument("-i", "--robot", dest='robot_file', required=True,
                         help='Input robot file')
-    parser.add_argument("-o", "--rst", dest='rst_file', required=True,
+    parser.add_argument("-o", "--rst", dest='rst_file',
                         help='Output RST file, e.g. my_component_qtp.rst')
     parser.add_argument("--only", dest="expression", default="",
                         help="Expression of tags for Sphinx' `only` directive that surrounds all RST content. "
                         "By default, no `only` directive is generated.")
+    parser.add_argument("--stylecheck", action="store_true",
+                        help="Validate RST syntax inside Robot documentation blocks.")
+    parser.add_argument("--fix", action="store_true",
+                        help="Automatically fix RST formatting inside Robot documentation blocks.")
     parser.add_argument("-p", "--prefix", default='QTEST-',
                         help="Overrides the default 'QTEST-' prefix.")
     parser.add_argument("-r", "--relationships", nargs='*',
@@ -110,6 +115,19 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
     args = parser.parse_args()
+
+    if args.stylecheck or args.fix:
+        robot_file = Path(args.robot_file)
+        parser = StyleChecker(robot_file, fix=args.fix)
+        parser.run()
+
+        if (parser.issues_found or parser.lint_issues_found) and args.fix:
+            parser.model.save(robot_file)
+
+        if not (parser.issues_found or parser.lint_issues_found):
+            LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
+
+        return 1 if parser.issues_found else 0
 
     type_map = {
         'i': 'integration',
@@ -142,6 +160,7 @@ def main():
 
     parser = ParserApplication(Path(args.robot_file), args.include)
     parser.run()
+
     if parser.tests:
         exit_code = generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
                                          gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
