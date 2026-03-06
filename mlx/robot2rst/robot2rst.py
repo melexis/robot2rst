@@ -10,7 +10,6 @@ from mako.exceptions import RichTraceback
 from mako.template import Template
 
 from .robot_parser import ParserApplication
-from .style_checker import StyleChecker
 
 TEMPLATE_FILE = Path(__file__).parent.joinpath('robot2rst.mako')
 LOGGER = logging.getLogger('robot2rst')
@@ -117,6 +116,12 @@ def main():
     args = parser.parse_args()
 
     if args.stylecheck or args.fix:
+        try:
+            from .style_checker import StyleChecker
+        except ImportError:
+            LOGGER.error("Missing packages. Install with 'pip install mlx.robot2rst[stylecheck]'")
+            return 1
+
         robot_file = Path(args.robot_file)
         parser = StyleChecker(robot_file, fix=args.fix)
         parser.run()

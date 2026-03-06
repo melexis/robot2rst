@@ -6,14 +6,10 @@ import logging
 import itertools
 import sys
 
-try:
-    from docstrfmt.docstrfmt import Manager, IgnoreMessagesReporter, pairwise
-    from docstrfmt.main import Reporter
-    from docstrfmt.exceptions import InvalidRstError, InvalidRstErrors
-    from docutils import nodes
-    STYLE_PACKAGES_INSTALLED = True
-except ImportError:
-    STYLE_PACKAGES_INSTALLED = False
+from docstrfmt.docstrfmt import Manager, IgnoreMessagesReporter, pairwise
+from docstrfmt.main import Reporter
+from docstrfmt.exceptions import InvalidRstError, InvalidRstErrors
+from docutils import nodes
 
 from robot.api import Token, get_model
 from robot.parsing import ModelVisitor
@@ -122,10 +118,6 @@ class StyleChecker(ModelVisitor):
             robot_file (Path): Path to the robot file.
             fix (bool): Whether to automatically fix issues. Defaults to False.
         """
-        if not STYLE_PACKAGES_INSTALLED:
-            LOGGER.error("Missing packages. Install with 'pip install mlx.robot2rst[stylecheck]'")
-            sys.exit(1)
-
         self.robot_file = robot_file
         self.fix = fix
         self.model = get_model(robot_file)
