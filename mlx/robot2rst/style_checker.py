@@ -4,7 +4,6 @@ RST style checker and fixer for Robot Framework documentation.
 
 import logging
 import itertools
-import sys
 
 from docstrfmt.docstrfmt import Manager, IgnoreMessagesReporter, pairwise
 from docstrfmt.main import Reporter
