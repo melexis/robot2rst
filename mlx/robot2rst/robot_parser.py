@@ -1,3 +1,4 @@
+import os
 import re
 from collections import namedtuple
 
@@ -66,6 +67,11 @@ class ParserApplication(ModelVisitor):
                     previous_token = token
             elif element_type == Token.TAGS:
                 tags = [el.value for el in element.tokens if el.type == Token.ARGUMENT]
+
+        for var_name in re.findall(r'%\{(.+?)\}', doc):
+            if var_name in os.environ:
+                doc = doc.replace(f'%{{{var_name}}}', os.environ[var_name])
+
         if self.evaluate_inclusion(tags):
             self.tests.append(self.TestAttributes(node.name, doc, tags))
 

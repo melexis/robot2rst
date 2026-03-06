@@ -11,7 +11,7 @@ ${MESSAGE}     Hello,
 *** Test Cases ***
 First Test
     [Documentation]     Thorough and relatively lengthy documentation for the example test case that
-    ...  logs ${MESSAGE} and ${NAD} and ${NAMES}.
+    ...  logs ${MESSAGE} and ${NAD} and ${NAMES}. %{RUNTIME_VAR}
     [Tags]              SWRQT-SOME_RQT  ANOTHER-TAG  SWRQT-OTHER_RQT  SYSRQT-SOME_SYSTEM_RQT
                         Log    ${MESSAGE}
                         Log    ${NAD}
