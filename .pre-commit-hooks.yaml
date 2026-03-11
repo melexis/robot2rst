@@ -3,5 +3,5 @@
   description: Checks and fixes RST syntax/layout in Robot Framework [Documentation] blocks.
   entry: robot2rst stylecheck
   language: python
-  types: [robot]
+  files: \.robot$
   additional_dependencies: ["mlx.robot2rst[stylecheck]"]
