@@ -176,7 +176,7 @@ class StyleChecker(ModelVisitor):
                 new_tokens.extend([
                     Token(Token.SEPARATOR, "    "),
                     Token(Token.CONTINUATION, "..."),
-                    Token(Token.SEPARATOR, " " if line else ""),
+                    Token(Token.SEPARATOR, "  " if line else ""),
                     Token(Token.ARGUMENT, line),
                     Token(Token.EOL, "\n")
                 ])
