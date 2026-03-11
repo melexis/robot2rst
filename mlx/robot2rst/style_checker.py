@@ -110,15 +110,17 @@ class StyleChecker(ModelVisitor):
         issues_found (bool): Whether any RST syntax issues were found.
         lint_issues_found (bool): Whether any RST layout issues were found.
     """
-    def __init__(self, robot_file, fix=False):
+    def __init__(self, robot_file, fix=False, **kwargs):
         """Constructor
 
         Args:
             robot_file (Path): Path to the robot file.
             fix (bool): Whether to automatically fix issues. Defaults to False.
+            **kwargs: Arbitrary keyword arguments, including 'line_length'.
         """
         self.robot_file = robot_file
         self.fix = fix
+        self.line_length = kwargs.get('line_length', 100)
         self.model = get_model(robot_file)
 
         self.issues_found = False
@@ -135,7 +137,7 @@ class StyleChecker(ModelVisitor):
         manager = StyleManager(current_file=self.robot_file)
 
         doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)  # , file=self.robot_file
-        formatted_doc = manager.format_node(100, doc_node).rstrip()
+        formatted_doc = manager.format_node(self.line_length, doc_node).rstrip()
         if manager.error_count > 0:
             self.issues_found = True
 

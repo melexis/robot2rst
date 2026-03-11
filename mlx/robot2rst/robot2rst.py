@@ -109,7 +109,8 @@ def run_stylecheck(args):
     files_checked = False
     for robot_file in get_robot_files(args.paths):
         files_checked = True
-        parser = StyleChecker(robot_file, fix=args.fix)
+        style_kwargs = {"line_length": args.line_length}
+        parser = StyleChecker(robot_file, fix=args.fix, **style_kwargs)
         parser.run()
 
         if (parser.issues_found or parser.lint_issues_found) and args.fix:
@@ -229,6 +230,9 @@ examples:
                                    help="Automatically fix RST formatting inside Robot documentation blocks.")
     parser_stylecheck.add_argument("--fail-on-layout", action="store_true",
                                    help="Fail on RST layout issues as well as syntax issues.")
+    parser_stylecheck.add_argument("--line-length", type=int, default=100,
+                                   help="Max line length for RST blocks (note: the line length does not include the "
+                                   "length of the [Documentation] tag for example). Default: 100.")
     parser_stylecheck.set_defaults(func=run_stylecheck)
 
     # Make 'convert' the default command if no other command is specified
