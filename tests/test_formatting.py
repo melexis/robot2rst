@@ -41,6 +41,32 @@ def test_fix_adds_missing_newline(caplog):
     assert fixed_content == expected_content
 
 
+def test_fix_multiple_syntax_errors(caplog):
+    file_name = "multiple_syntax_errors.robot"
+    robot_file_original = INPUT_DIR / file_name
+    if OUTPUT_DIR.exists():
+        shutil.rmtree(OUTPUT_DIR)
+    OUTPUT_DIR.mkdir()
+    robot_file_to_fix = OUTPUT_DIR / file_name
+    shutil.copy(robot_file_original, robot_file_to_fix)
+
+    sys.argv = ["robot2rst", "stylecheck", str(robot_file_to_fix), "--fix"]
+
+    with caplog.at_level(logging.INFO):
+        result_code = robot2rst_main()
+    breakpoint()
+    assert "Bullet list ends without a blank line; unexpected unindent." in caplog.text
+    assert "Inline literal start-string without end-string." in caplog.text
+    # The error `Inline literal start-string without end-string.` will be fixed but not in a correct way...
+
+    assert result_code == 1
+
+    fixed_content = robot_file_to_fix.read_text()
+    expected_content = (EXPECTED_DIR / file_name).read_text()
+
+    assert fixed_content == expected_content
+
+
 def test_convert_after_style_fix(caplog):
     """
     Integration test to ensure that running 'convert' after 'stylecheck --fix'
