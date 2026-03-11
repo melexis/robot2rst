@@ -105,6 +105,7 @@ def run_stylecheck(args):
         return 1
 
     issues_found = False
+    lint_issues_found = False
     for robot_file in get_robot_files(args.paths):
         parser = StyleChecker(robot_file, fix=args.fix)
         parser.run()
@@ -115,11 +116,11 @@ def run_stylecheck(args):
         if not (parser.issues_found or parser.lint_issues_found):
             LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
         issues_found = issues_found or parser.issues_found
+        lint_issues_found = lint_issues_found or parser.lint_issues_found
     else:
         LOGGER.warning("No Robot Framework files found to check.")
 
-    # only return non-zero if there are syntax issues
-    return 1 if issues_found else 0
+    return 1 if issues_found or (args.fail_on_layout and lint_issues_found) else 0
 
 
 def run_conversion(args):
@@ -182,8 +183,8 @@ examples:
   # Explicitly call convert
   robot2rst convert -i input.robot -o output.rst
 
-  # Check style
-  robot2rst stylecheck path/to/robot/files path/to/robot/folders/ --fix
+  # Check style of all .robot files in the current directory and subdirectories
+  robot2rst stylecheck --fix
 """
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
@@ -219,8 +220,8 @@ examples:
     # Stylecheck command
     parser_stylecheck = subparsers.add_parser('stylecheck',
                                               help='Checks and fixes RST style in Robot documentation blocks.')
-    parser_stylecheck.add_argument('paths', nargs='+', default=['.'],
-                                   help='One or more paths to files or folders to check.')
+    parser_stylecheck.add_argument('paths', nargs='*', default=['.'],
+                                   help='One or more paths to files or folders to check. Default: current directory.')
     parser_stylecheck.add_argument("--fix", action="store_true",
                                    help="Automatically fix RST formatting inside Robot documentation blocks.")
     parser_stylecheck.add_argument("--fail-on-layout", action="store_true",
