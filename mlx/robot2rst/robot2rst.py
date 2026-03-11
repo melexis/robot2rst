@@ -79,61 +79,30 @@ def _tweak_prefix(prefix):
     return prefix
 
 
-def main():
-    '''Main entry point for script: parse arguments and execute'''
-    parser = argparse.ArgumentParser(description='Convert robot test cases to reStructuredText with traceable items.')
-    parser.add_argument("-i", "--robot", dest='robot_file', required=True,
-                        help='Input robot file')
-    parser.add_argument("-o", "--rst", dest='rst_file',
-                        help='Output RST file, e.g. my_component_qtp.rst')
-    parser.add_argument("--only", dest="expression", default="",
-                        help="Expression of tags for Sphinx' `only` directive that surrounds all RST content. "
-                        "By default, no `only` directive is generated.")
-    parser.add_argument("--stylecheck", action="store_true",
-                        help="Validate RST syntax inside Robot documentation blocks.")
-    parser.add_argument("--fix", action="store_true",
-                        help="Automatically fix RST formatting inside Robot documentation blocks.")
-    parser.add_argument("-p", "--prefix", default='QTEST-',
-                        help="Overrides the default 'QTEST-' prefix.")
-    parser.add_argument("-r", "--relationships", nargs='*',
-                        help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
-                             "is 'validates'.")
-    parser.add_argument("-t", "--tags", nargs='*',
-                        help="Zero or more Python regexes for matching tags to treat them as traceable targets via a "
-                             "relationship. All tags get matched by default.")
-    parser.add_argument("--include", nargs='*', default=[],
-                        help="Zero or more Python regexes for matching tags to filter test cases. "
-                             "If every regex matches at least one of a test case's tags, the test case is included.")
-    parser.add_argument("-c", "--coverage", nargs='*',
-                        help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
-    parser.add_argument("--type", default='q',
-                        help="Give value that starts with 'q' or 'i' (case-insensitive) to explicitly define "
-                             "the type of test: qualification/integration test. The default is 'qualification'.")
-    parser.add_argument("--trim-suffix", action='store_true',
-                        help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
+def run_stylecheck(args):
+    """Runs the style checker and fixer."""
+    try:
+        from .style_checker import StyleChecker
+    except ImportError:
+        LOGGER.error("Missing packages. Install with 'pip install mlx.robot2rst[stylecheck]'")
+        return 1
 
-    logging.basicConfig(level=logging.INFO)
-    args = parser.parse_args()
+    robot_file = Path(args.robot_file)
+    parser = StyleChecker(robot_file, fix=args.fix)
+    parser.run()
 
-    if args.stylecheck or args.fix:
-        try:
-            from .style_checker import StyleChecker
-        except ImportError:
-            LOGGER.error("Missing packages. Install with 'pip install mlx.robot2rst[stylecheck]'")
-            return 1
+    if (parser.issues_found or parser.lint_issues_found) and args.fix:
+        parser.model.save(robot_file)
 
-        robot_file = Path(args.robot_file)
-        parser = StyleChecker(robot_file, fix=args.fix)
-        parser.run()
+    if not (parser.issues_found or parser.lint_issues_found):
+        LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
 
-        if (parser.issues_found or parser.lint_issues_found) and args.fix:
-            parser.model.save(robot_file)
+    # only return non-zero if there are syntax issues
+    return 1 if parser.issues_found else 0
 
-        if not (parser.issues_found or parser.lint_issues_found):
-            LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
 
-        return 1 if parser.issues_found else 0
-
+def run_conversion(args):
+    """Runs the robot to rst conversion."""
     type_map = {
         'i': 'integration',
         'q': 'qualification',
@@ -176,6 +145,76 @@ def main():
         LOGGER.info(msg)
         exit_code = 0
     return exit_code
+
+
+def main():
+    '''Main entry point for script: parse arguments and execute'''
+    parser = argparse.ArgumentParser(
+        description='Convert robot test cases to reStructuredText with traceable items.',
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.epilog = """
+examples:
+  # Convert a file (default command)
+  robot2rst -i input.robot -o output.rst
+
+  # Explicitly call convert
+  robot2rst convert -i input.robot -o output.rst
+
+  # Check style
+  robot2rst stylecheck -i input.robot --fix
+"""
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+    # Conversion command
+    parser_convert = subparsers.add_parser('convert', help='Converts a Robot Framework file to a reStructuredText (.rst) file (default).')
+    parser_convert.add_argument("-i", "--robot", dest='robot_file', required=True,
+                                help='Input robot file')
+    parser_convert.add_argument("-o", "--rst", dest='rst_file', required=True,
+                                help='Output RST file, e.g. my_component_qtp.rst')
+    parser_convert.add_argument("--only", dest="expression", default="",
+                                help="Expression of tags for Sphinx' `only` directive that surrounds all RST content.")
+    parser_convert.add_argument("-p", "--prefix", default='QTEST-',
+                                help="Overrides the default 'QTEST-' prefix.")
+    parser_convert.add_argument("-r", "--relationships", nargs='*',
+                                help="Name(s) of the relationship(s) used to link to items in Tags section. Default: 'validates'.")
+    parser_convert.add_argument("-t", "--tags", nargs='*',
+                                help="Python regexes for matching tags to treat as traceable targets. Matches all by default.")
+    parser_convert.add_argument("--include", nargs='*', default=[],
+                                help="Python regexes for matching tags to filter test cases.")
+    parser_convert.add_argument("-c", "--coverage", nargs='*',
+                                help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in --tags.")
+    parser_convert.add_argument("--type", default='q',
+                                help="Type of test ('q' for qualification, 'i' for integration). Default: 'qualification'.")
+    parser_convert.add_argument("--trim-suffix", action='store_true',
+                                help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
+    parser_convert.set_defaults(func=run_conversion)
+
+    # Stylecheck command
+    parser_stylecheck = subparsers.add_parser('stylecheck', help='Checks and fixes RST style in Robot documentation blocks.')
+    parser_stylecheck.add_argument("-i", "--robot", dest='robot_file', required=True,
+                                   help='Input robot file')
+    parser_stylecheck.add_argument("--fix", action="store_true",
+                                   help="Automatically fix RST formatting inside Robot documentation blocks.")
+    parser_stylecheck.set_defaults(func=run_stylecheck)
+
+    # Make 'convert' the default command if no other command is specified
+    commands = ['convert', 'stylecheck']
+    help_flags = ['-h', '--help']
+    is_command_present = any(cmd in sys.argv[1:2] for cmd in commands + help_flags)
+
+    if not is_command_present and len(sys.argv) > 1:
+        sys.argv.insert(1, 'convert')
+
+    logging.basicConfig(level=logging.INFO)
+    args = parser.parse_args()
+
+    if hasattr(args, 'func'):
+        return args.func(args)
+    else:
+        # No command was given (e.g., `robot2rst` or `robot2rst --help`)
+        parser.print_help()
+        return 0
 
 
 def entrypoint():
