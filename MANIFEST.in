@@ -12,3 +12,5 @@ exclude mlx/robot2rst/__version__.py
 include tox.ini
 include *.yaml
 recursive-include tests *.py
+recursive-include tests *.robot
+recursive-include tests *.rst
