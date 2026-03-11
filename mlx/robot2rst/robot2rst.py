@@ -79,6 +79,23 @@ def _tweak_prefix(prefix):
     return prefix
 
 
+def get_robot_files(paths):
+    """Yields Path objects for all robot files found in the input paths.
+
+    Args:
+        paths (list of str): List of file or directory paths.
+
+    Yields:
+        Path: Path object for each robot file found.
+    """
+    for p in paths:
+        path = Path(p)
+        if path.is_file() and path.suffix == ".robot":
+            yield path
+        elif path.is_dir():
+            yield from path.rglob("*.robot")
+
+
 def run_stylecheck(args):
     """Runs the style checker and fixer."""
     try:
@@ -87,18 +104,22 @@ def run_stylecheck(args):
         LOGGER.error("Missing packages. Install with 'pip install mlx.robot2rst[stylecheck]'")
         return 1
 
-    robot_file = Path(args.robot_file)
-    parser = StyleChecker(robot_file, fix=args.fix)
-    parser.run()
+    issues_found = False
+    for robot_file in get_robot_files(args.paths):
+        parser = StyleChecker(robot_file, fix=args.fix)
+        parser.run()
+    else:
+        LOGGER.warning("No Robot Framework files found to check.")
 
-    if (parser.issues_found or parser.lint_issues_found) and args.fix:
-        parser.model.save(robot_file)
+        if (parser.issues_found or parser.lint_issues_found) and args.fix:
+            parser.model.save(robot_file)
 
-    if not (parser.issues_found or parser.lint_issues_found):
-        LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
+        if not (parser.issues_found or parser.lint_issues_found):
+            LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
+        issues_found = issues_found or parser.issues_found
 
     # only return non-zero if there are syntax issues
-    return 1 if parser.issues_found else 0
+    return 1 if issues_found else 0
 
 
 def run_conversion(args):
@@ -162,7 +183,7 @@ examples:
   robot2rst convert -i input.robot -o output.rst
 
   # Check style
-  robot2rst stylecheck -i input.robot --fix
+  robot2rst stylecheck path/to/robot/files path/to/robot/folders/ --fix
 """
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
@@ -198,8 +219,8 @@ examples:
     # Stylecheck command
     parser_stylecheck = subparsers.add_parser('stylecheck',
                                               help='Checks and fixes RST style in Robot documentation blocks.')
-    parser_stylecheck.add_argument("-i", "--robot", dest='robot_file', required=True,
-                                   help='Input robot file')
+    parser_stylecheck.add_argument('paths', nargs='+', default=['.'],
+                                   help='One or more paths to files or folders to check.')
     parser_stylecheck.add_argument("--fix", action="store_true",
                                    help="Automatically fix RST formatting inside Robot documentation blocks.")
     parser_stylecheck.set_defaults(func=run_stylecheck)
