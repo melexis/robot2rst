@@ -10,3 +10,5 @@ exclude mlx/robot2rst/__version__.py
 
 # added by check_manifest.py
 include tox.ini
+
+recursive-exclude tests *
