@@ -108,8 +108,6 @@ def run_stylecheck(args):
     for robot_file in get_robot_files(args.paths):
         parser = StyleChecker(robot_file, fix=args.fix)
         parser.run()
-    else:
-        LOGGER.warning("No Robot Framework files found to check.")
 
         if (parser.issues_found or parser.lint_issues_found) and args.fix:
             parser.model.save(robot_file)
@@ -117,6 +115,8 @@ def run_stylecheck(args):
         if not (parser.issues_found or parser.lint_issues_found):
             LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
         issues_found = issues_found or parser.issues_found
+    else:
+        LOGGER.warning("No Robot Framework files found to check.")
 
     # only return non-zero if there are syntax issues
     return 1 if issues_found else 0
@@ -223,6 +223,8 @@ examples:
                                    help='One or more paths to files or folders to check.')
     parser_stylecheck.add_argument("--fix", action="store_true",
                                    help="Automatically fix RST formatting inside Robot documentation blocks.")
+    parser_stylecheck.add_argument("--fail-on-layout", action="store_true",
+                                   help="Fail on RST layout issues as well as syntax issues.")
     parser_stylecheck.set_defaults(func=run_stylecheck)
 
     # Make 'convert' the default command if no other command is specified
