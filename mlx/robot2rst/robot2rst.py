@@ -167,7 +167,8 @@ examples:
     subparsers = parser.add_subparsers(dest='command', help='Available commands')
 
     # Conversion command
-    parser_convert = subparsers.add_parser('convert', help='Converts a Robot Framework file to a reStructuredText (.rst) file (default).')
+    parser_convert = subparsers.add_parser('convert', help='Converts a Robot Framework file to a reStructuredText '
+                                           '(.rst) file (default).')
     parser_convert.add_argument("-i", "--robot", dest='robot_file', required=True,
                                 help='Input robot file')
     parser_convert.add_argument("-o", "--rst", dest='rst_file', required=True,
@@ -177,21 +178,26 @@ examples:
     parser_convert.add_argument("-p", "--prefix", default='QTEST-',
                                 help="Overrides the default 'QTEST-' prefix.")
     parser_convert.add_argument("-r", "--relationships", nargs='*',
-                                help="Name(s) of the relationship(s) used to link to items in Tags section. Default: 'validates'.")
+                                help="Name(s) of the relationship(s) used to link to items in Tags section. "
+                                "Default: 'validates'.")
     parser_convert.add_argument("-t", "--tags", nargs='*',
-                                help="Python regexes for matching tags to treat as traceable targets. Matches all by default.")
+                                help="Python regexes for matching tags to treat as traceable targets. "
+                                "Matches all by default.")
     parser_convert.add_argument("--include", nargs='*', default=[],
                                 help="Python regexes for matching tags to filter test cases.")
     parser_convert.add_argument("-c", "--coverage", nargs='*',
                                 help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in --tags.")
     parser_convert.add_argument("--type", default='q',
-                                help="Type of test ('q' for qualification, 'i' for integration). Default: 'qualification'.")
+                                help="Type of test ('q' for qualification, 'i' for integration). "
+                                "Default: 'qualification'.")
     parser_convert.add_argument("--trim-suffix", action='store_true',
-                                help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
+                                help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed "
+                                "to '-'.")
     parser_convert.set_defaults(func=run_conversion)
 
     # Stylecheck command
-    parser_stylecheck = subparsers.add_parser('stylecheck', help='Checks and fixes RST style in Robot documentation blocks.')
+    parser_stylecheck = subparsers.add_parser('stylecheck',
+                                              help='Checks and fixes RST style in Robot documentation blocks.')
     parser_stylecheck.add_argument("-i", "--robot", dest='robot_file', required=True,
                                    help='Input robot file')
     parser_stylecheck.add_argument("--fix", action="store_true",
