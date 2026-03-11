@@ -84,7 +84,6 @@ def test_convert_after_style_fix(caplog):
     sys.argv = ["robot2rst", "stylecheck", str(fixed_file), "--fix"]
     with caplog.at_level(logging.INFO):
         result_code_fix = robot2rst_main()
-
     assert 'Applying RST layout fixes' in caplog.text
     assert result_code_fix == 0, "Style fix should run and find only layout issues to fix"
 
@@ -99,3 +98,23 @@ def test_convert_after_style_fix(caplog):
     rst_content = rst_file_out.read_text()
     expected_rst_content = (EXPECTED_DIR / f"{file_name}.rst").read_text()
     assert rst_content == expected_rst_content
+
+
+def test_fail_on_layout(caplog):
+    """
+    Integration test to ensure that running 'stylecheck --fail-on-layout'
+    correctly fails when layout issues are present (without syntax errors)
+    """
+    file_name = "multiline_doc"
+    robot_file_original = INPUT_DIR / f"{file_name}.robot"
+    if OUTPUT_DIR.exists():
+        shutil.rmtree(OUTPUT_DIR)
+    OUTPUT_DIR.mkdir()
+    fixed_file = OUTPUT_DIR / f"{file_name}.robot"
+    shutil.copy(robot_file_original, fixed_file)
+
+    sys.argv = ["robot2rst", "stylecheck", str(fixed_file), "--fail-on-layout"]
+    with caplog.at_level(logging.INFO):
+        result_code_fix = robot2rst_main()
+    assert result_code_fix == 1, "Style check should fail on layout issues"
+    assert 'RST syntax/layout issues found. Use --fix to resolve.' in caplog.text
