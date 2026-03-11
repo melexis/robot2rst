@@ -4,6 +4,7 @@ RST style checker and fixer for Robot Framework documentation.
 
 import logging
 import itertools
+import re
 
 from docstrfmt.docstrfmt import Manager, IgnoreMessagesReporter, pairwise
 from docstrfmt.main import Reporter
@@ -136,7 +137,11 @@ class StyleChecker(ModelVisitor):
 
         manager = StyleManager(current_file=self.robot_file)
 
-        doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)  # , file=self.robot_file
+        # Ensure bullet lists are preceded by a blank line
+        text = re.sub(r'([^\n])\n([-*+]) ', r'\1\n\n\2 ', doc_string)
+
+        doc_node = manager.parse_string(text, line_offset=node.lineno-1)
+        doc_node.settings.tab_width = 4
         formatted_doc = manager.format_node(self.line_length, doc_node).rstrip()
         if manager.error_count > 0:
             self.issues_found = True
