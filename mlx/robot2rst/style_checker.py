@@ -135,7 +135,7 @@ class StyleChecker(ModelVisitor):
         manager = StyleManager(current_file=self.robot_file)
 
         doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)  # , file=self.robot_file
-        formatted_doc = manager.format_node(103, doc_node).rstrip()
+        formatted_doc = manager.format_node(100, doc_node).rstrip()
         if manager.error_count > 0:
             self.issues_found = True
 
