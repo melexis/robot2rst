@@ -2,16 +2,23 @@ import logging
 import sys
 import shutil
 from pathlib import Path
+<<<<<<< coderabbitai/utg/da2fcbf
 import tempfile
 import os
 import pytest
+=======
+>>>>>>> add-stylechecker
 
 # Add the project root to the sys.path to allow importing mlx.robot2rst
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+<<<<<<< coderabbitai/utg/da2fcbf
 from mlx.robot2rst.robot2rst import main as robot2rst_main, _tweak_prefix, get_robot_files, render_template
 from mlx.robot2rst.robot_parser import ParserApplication
 from mlx.robot2rst.style_checker import StyleChecker
+=======
+from mlx.robot2rst.robot2rst import main as robot2rst_main
+>>>>>>> add-stylechecker
 
 INPUT_DIR = Path(__file__).parent / "input"
 OUTPUT_DIR = Path(__file__).parent / "output"
@@ -122,6 +129,7 @@ def test_fail_on_layout(caplog):
         result_code_fix = robot2rst_main()
     assert result_code_fix == 1, "Style check should fail on layout issues"
     assert 'RST syntax/layout issues found. Use --fix to resolve.' in caplog.text
+<<<<<<< coderabbitai/utg/da2fcbf
 
 
 # Tests for _tweak_prefix function
@@ -883,3 +891,5 @@ Test Case
         rst_content = rst_file.read_text()
         # Should not include traceability matrix
         assert "Traceability Matrix" not in rst_content
+=======
+>>>>>>> add-stylechecker

@@ -34,47 +34,115 @@ Usage
 
 .. code-block:: console
 
-    robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- \
-        --tags SWRQT- SYSRQT- --relationships validates ext_toolname --coverage 100 66.66
-
     $ robot2rst --help
 
-    usage: robot2rst [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]
-                     [-r [RELATIONSHIPS ...]] [-t [TAGS ...]] [--include [INCLUDE ...]]
-                     [-c [COVERAGE ...]] [--type TYPE] [--trim-suffix]
+    usage: robot2rst [-h] {convert,stylecheck} ...
 
     Convert robot test cases to reStructuredText with traceable items.
 
-    options:
-      -h, --help            show this help message and exit
-      -i ROBOT_FILE, --robot ROBOT_FILE
-                            Input robot file
-      -o RST_FILE, --rst RST_FILE
-                            Output RST file, e.g. my_component_qtp.rst
-      --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all
-                            RST content. By default, no `only` directive is generated.
-      -p PREFIX, --prefix PREFIX
-                            Overrides the default 'QTEST-' prefix.
-      -r [RELATIONSHIPS ...], --relationships [RELATIONSHIPS ...]
-                            Name(s) of the relationship(s) used to link to items in Tags section.
-                            The default value is 'validates'.
-      -t [TAGS ...], --tags [TAGS ...]
-                            Zero or more Python regexes for matching tags to treat them as
-                            traceable targets via a relationship. All tags get matched by
-                            default.
-      --include [INCLUDE ...]
-                            Zero or more Python regexes for matching tags to filter test cases.
-                            If every regex matches at least one of a test case's tags, the test
-                            case is included.
-      -c [COVERAGE ...], --coverage [COVERAGE ...]
-                            Minimum coverage percentages for the item-matrix(es); 1 value per tag
-                            in -t, --tags.
-      --type TYPE           Give value that starts with 'q' or 'i' (case-insensitive) to
-                            explicitly define the type of test: qualification/integration test.
-                            The default is 'qualification'.
-      --trim-suffix         If the suffix of any prefix or --tags argument ends with '_-' it gets
-                            trimmed to '-'.
+    positional arguments:
+    {convert,stylecheck}  Available commands
+        convert             Converts a Robot Framework file to a reStructuredText (.rst) file (default).
+        stylecheck          Checks and fixes RST style in Robot documentation blocks.
 
+    options:
+    -h, --help            show this help message and exit
+
+    examples:
+    # Convert a file (default command)
+    robot2rst -i input.robot -o output.rst
+
+    # Explicitly call convert
+    robot2rst convert -i input.robot -o output.rst
+
+    # Check style of all .robot files in the current directory and subdirectories
+    robot2rst stylecheck --fix
+
+
+Conversion (Default)
+====================
+
+To convert a Robot file to RST:
+
+.. code-block:: console
+
+    robot2rst -i example.robot -o test_plan.rst --prefix ITEST_MY_LIB- \
+        --tags SWRQT- SYSRQT- --relationships validates ext_toolname --coverage 100 66.66
+
+    $ robot2rst convert --help
+
+    usage: robot2rst convert [-h] -i ROBOT_FILE -o RST_FILE [--only EXPRESSION] [-p PREFIX]
+                            [-r [RELATIONSHIPS ...]] [-t [TAGS ...]] [--include [INCLUDE ...]]
+                            [-c [COVERAGE ...]] [--type TYPE] [--trim-suffix]
+
+    options:
+    -h, --help            show this help message and exit
+    -i ROBOT_FILE, --robot ROBOT_FILE
+                            Input robot file
+    -o RST_FILE, --rst RST_FILE
+                            Output RST file, e.g. my_component_qtp.rst
+    --only EXPRESSION     Expression of tags for Sphinx' `only` directive that surrounds all RST content.
+    -p PREFIX, --prefix PREFIX
+                            Overrides the default 'QTEST-' prefix.
+    -r [RELATIONSHIPS ...], --relationships [RELATIONSHIPS ...]
+                            Name(s) of the relationship(s) used to link to items in Tags section. Default:
+                            'validates'.
+    -t [TAGS ...], --tags [TAGS ...]
+                            Python regexes for matching tags to treat as traceable targets. Matches all by
+                            default.
+    --include [INCLUDE ...]
+                            Python regexes for matching tags to filter test cases.
+    -c [COVERAGE ...], --coverage [COVERAGE ...]
+                            Minimum coverage percentages for the item-matrix(es); 1 value per tag in --tags.
+    --type TYPE           Type of test ('q' for qualification, 'i' for integration). Default:
+                            'qualification'.
+    --trim-suffix         If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to
+                            '-'.
+
+Style Checker & Fixer
+=====================
+
+You can also check and automatically fix the RST syntax and layout within the ``[Documentation]`` blocks of your Robot files.
+
+.. code-block:: console
+
+    # Check all .robot files in the current directory
+    robot2rst stylecheck
+
+    # Automatically fix issues and set a custom line length
+    robot2rst stylecheck --fix --line-length 120
+
+    $ robot2rst stylecheck --help
+
+    usage: robot2rst stylecheck [-h] [--fix] [--fail-on-layout] [--line-length LINE_LENGTH] [paths ...]
+
+    positional arguments:
+    paths                 One or more paths to files or folders to check. Default: current directory.
+
+    options:
+    -h, --help            show this help message and exit
+    --fix                 Automatically fix RST formatting inside Robot documentation blocks.
+    --fail-on-layout      Fail on RST layout issues as well as syntax issues.
+    --line-length LINE_LENGTH
+                            Max line length for RST blocks (note: the line length does not include the length
+                            of the [Documentation] tag for example). Default: 100.
+
+
+---------------
+Pre-commit Hook
+---------------
+
+You can use ``robot2rst`` as a pre-commit hook to ensure your Robot documentation stays correctly formatted.
+Add this to your ``.pre-commit-config.yaml``:
+
+.. code-block:: yaml
+
+    repos:
+      - repo: https://github.com/melexis/robot2rst
+        rev: 3.7.0  # Use the latest stable release
+        hooks:
+          - id: robot2rst-stylecheck
+            args: ["--fix", "--line-length", "100"]
 
 -------------
 Configuration
