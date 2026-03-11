@@ -54,7 +54,6 @@ def test_fix_multiple_syntax_errors(caplog):
 
     with caplog.at_level(logging.INFO):
         result_code = robot2rst_main()
-    breakpoint()
     assert "Bullet list ends without a blank line; unexpected unindent." in caplog.text
     assert "Inline literal start-string without end-string." in caplog.text
     # The error `Inline literal start-string without end-string.` will be fixed but not in a correct way...
