@@ -106,7 +106,9 @@ def run_stylecheck(args):
 
     issues_found = False
     lint_issues_found = False
+    files_checked = False
     for robot_file in get_robot_files(args.paths):
+        files_checked = True
         parser = StyleChecker(robot_file, fix=args.fix)
         parser.run()
 
@@ -117,7 +119,8 @@ def run_stylecheck(args):
             LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
         issues_found = issues_found or parser.issues_found
         lint_issues_found = lint_issues_found or parser.lint_issues_found
-    else:
+
+    if not files_checked:
         LOGGER.warning("No Robot Framework files found to check.")
 
     return 1 if issues_found or (args.fail_on_layout and lint_issues_found) else 0
