@@ -7,7 +7,7 @@ project_url = 'https://github.com/melexis/robot2rst'
 requires = ['robotframework>=3.2', 'mako']
 
 extras_require = {
-    'stylecheck': ['docstrfmt'],
+    'stylecheck': ['docstrfmt==2.0.2'],
 }
 
 setup(
