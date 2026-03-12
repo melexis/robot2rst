@@ -312,7 +312,7 @@ Test Case
         checker.run()
 
         # Should not find any issues
-        assert not checker.issues_found or not checker.lint_issues_found
+        assert not checker.issues_found and not checker.lint_issues_found
 
 
 def test_stylecheck_with_custom_line_length():
