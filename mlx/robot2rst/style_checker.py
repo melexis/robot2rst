@@ -8,7 +8,6 @@ import re
 
 from docstrfmt.docstrfmt import Manager, IgnoreMessagesReporter, pairwise
 from docstrfmt.main import Reporter
-from docstrfmt.exceptions import InvalidRstError, InvalidRstErrors
 from docutils import nodes
 
 from robot.api import Token, get_model
