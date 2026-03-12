@@ -152,7 +152,7 @@ Test With Variable
         assert parser.variables["${NUMBER}"] == "42"
 
 
-def test_parser_application_env_variables():
+def test_parser_application_env_variables(monkeypatch):
     """Test ParserApplication substitutes environment variables in documentation"""
     with tempfile.TemporaryDirectory() as tmpdir:
         tmppath = Path(tmpdir)
@@ -163,16 +163,13 @@ Test With Env Var
     Log    Hello
 """)
         # Set environment variable
-        os.environ['TEST_VAR'] = 'test_value'
+        monkeypatch.setenv("TEST_VAR", "test_value")
 
         parser = ParserApplication(robot_file, [])
         parser.run()
 
         assert len(parser.tests) == 1
         assert "Environment variable: test_value" in parser.tests[0].doc
-
-        # Clean up
-        del os.environ['TEST_VAR']
 
 
 def test_parser_application_empty_file():
