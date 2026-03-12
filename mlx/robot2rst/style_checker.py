@@ -47,29 +47,14 @@ class StyleManager(Manager):
         ]
         if errors:
             self.error_count += len(errors)
-            # Instead of raising, just log a warnings of the errors found.
-            # This allows us to be more tolerant of formatting issues, while still notifying the user.
-            if not self.settings.halt_level > 5:
-                raise InvalidRstErrors(
-                    [
-                        InvalidRstError(
-                            self.current_file,
-                            error.attributes["type"],
-                            (block_length - 1 if error.line is None else error.line)
-                            + line_offset,
-                            error.children[0].children[0].astext(),  # type: ignore[attr]
-                        )
-                        for error in errors
-                    ]
+            # Log warnings instead of raising to be more tolerant of formatting issues.
+            for error in errors:
+                LOGGER.warning(
+                    "%s:%d: %s",
+                    self.current_file,
+                    (block_length - 1 if error.line is None else error.line) + line_offset,
+                    error.children[0].children[0].astext(),  # type: ignore[attr]
                 )
-            else:
-                for error in errors:
-                    LOGGER.warning(
-                        "%s:%d: %s",
-                        self.current_file,
-                        (block_length - 1 if error.line is None else error.line) + line_offset,
-                        error.children[0].children[0].astext(),  # type: ignore[attr]
-                    )
         node.children = [
             child
             for child in node.children
