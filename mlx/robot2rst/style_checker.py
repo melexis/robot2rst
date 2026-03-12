@@ -148,10 +148,17 @@ class StyleChecker(ModelVisitor):
             formatted_doc: The new documentation string to use for the node.
         """
         lines = formatted_doc.splitlines()
+        original_tokens = node.tokens
+
+        indentation = "    "
+        if original_tokens:
+            # Get indentation from the first separator
+            if original_tokens[0].type == Token.SEPARATOR:
+                indentation = original_tokens[0].value
 
         # Start with the [Documentation] header
         new_tokens = [
-            Token(Token.SEPARATOR, "    "),
+            Token(Token.SEPARATOR, indentation),
             Token(Token.DOCUMENTATION, "[Documentation]"),
             Token(Token.SEPARATOR, "  " if lines else ""),
         ]
@@ -165,7 +172,7 @@ class StyleChecker(ModelVisitor):
             # Subsequent lines use the '...' continuation
             for line in lines[1:]:
                 new_tokens.extend([
-                    Token(Token.SEPARATOR, "    "),
+                    Token(Token.SEPARATOR, indentation),
                     Token(Token.CONTINUATION, "..."),
                     Token(Token.SEPARATOR, "  " if line else ""),
                     Token(Token.ARGUMENT, line),
@@ -173,7 +180,7 @@ class StyleChecker(ModelVisitor):
                 ])
             # End with a continuation to preserve blank line at the end of the docstring
             new_tokens.extend([
-                    Token(Token.SEPARATOR, "    "),
+                    Token(Token.SEPARATOR, indentation),
                     Token(Token.CONTINUATION, "..."),
                     Token(Token.EOL, "\n")
             ])
