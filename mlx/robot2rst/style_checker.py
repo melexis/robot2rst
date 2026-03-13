@@ -121,14 +121,15 @@ class StyleChecker(ModelVisitor):
 
         manager = StyleManager(current_file=self.robot_file)
 
-        # 1. Fix 'smushed' lists
-        text = re.sub(r'([^\n])\n([ \t]*)([-*+]) ', r'\1\n\n\2\3 ', doc_string)
+        if self.fix:
+            # 1. Fix 'smushed' lists
+            doc_string = re.sub(r'([^\n])\n([ \t]*)([-*+]) ', r'\1\n\n\2\3 ', doc_string)
 
-        # 2. Fix 'smushed' bold lines/headers (**text** on its own line will be seen as a header/title).
-        bold_header_pattern = r'([^\n])\n([ \t]*)(\*\*(?:(?!\*\*).)+\*\*)(?:\n|$)'
-        text = re.sub(bold_header_pattern, r'\1\n\n\2\3\n\n', text)
+            # 2. Fix 'smushed' bold lines/headers (**text** on its own line will be seen as a header/title).
+            bold_header_pattern = r'([^\n])\n([ \t]*)(\*\*(?:(?!\*\*).)+\*\*)(?:\n|$)'
+            doc_string = re.sub(bold_header_pattern, r'\1\n\n\2\3\n\n', doc_string)
 
-        doc_node = manager.parse_string(text, line_offset=node.lineno-1)
+        doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)
         doc_node.settings.tab_width = 4
         formatted_doc = manager.format_node(self.line_length, doc_node).rstrip()
         if manager.error_count > 0:
