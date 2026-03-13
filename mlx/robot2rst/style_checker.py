@@ -122,7 +122,7 @@ class StyleChecker(ModelVisitor):
         manager = StyleManager(current_file=self.robot_file)
 
         # Ensure bullet lists are preceded by a blank line
-        text = re.sub(r'([^\n])\n([-*+]) ', r'\1\n\n\2 ', doc_string)
+        text = re.sub(r'([^\n])\n([ \t]*)([-*+]) ', r'\1\n\n\2\3 ', doc_string)
 
         doc_node = manager.parse_string(text, line_offset=node.lineno-1)
         doc_node.settings.tab_width = 4
