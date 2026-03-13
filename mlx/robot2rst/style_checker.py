@@ -20,8 +20,9 @@ class StyleManager(Manager):
     """Overrides the default docstrfmt Manager to be more aggressive in fixing formatting issues,
     but also more tolerant of errors.
     """
-    def __init__(self, current_file):
+    def __init__(self, current_file, line_map=None):
         super().__init__(current_file=current_file, reporter=Reporter())
+        self.line_map = line_map
         # Override settings for aggressive formatting but high error tolerance
         self.settings.report_level = 5  # Only Critical
         self.settings.halt_level = 6    # Never Halt
@@ -48,10 +49,21 @@ class StyleManager(Manager):
             self.error_count += len(errors)
             # Log warnings instead of raising to be more tolerant of formatting issues.
             for error in errors:
+                # relative_line is 1-indexed from docutils
+                relative_line = error.line if error.line is not None else 1
+                # Convert 1-indexed error line to 0-indexed map index
+                map_idx = relative_line - 1
+                # Map back to original relative line
+                if self.line_map and 0 <= map_idx < len(self.line_map):
+                    corrected_relative_line = self.line_map[map_idx] + 1
+                else:
+                    corrected_relative_line = relative_line
+                # Calculate absolute line in .robot file
+                absolute_line = corrected_relative_line + line_offset
                 LOGGER.warning(
                     "%s:%d: %s",
                     self.current_file,
-                    (block_length - 1 if error.line is None else error.line) + line_offset,
+                    absolute_line,
                     error.children[0].children[0].astext(),  # type: ignore[attr]
                 )
         node.children = [
@@ -119,11 +131,20 @@ class StyleChecker(ModelVisitor):
         if not doc_string.strip():
             return
 
-        manager = StyleManager(current_file=self.robot_file)
-
+        original_lines = doc_string.splitlines(keepends=True)
+        current_map = list(range(len(original_lines)))
         if self.fix:
             # 1. Fix 'smushed' lists
-            doc_string, count = re.subn(r'([^\n])\n([ \t]*)([-*+]) ', r'\1\n\n\2\3 ', doc_string)
+            def fix_smushed_lists(match):
+                self.lint_issues_found = True
+                list_item = match.group(3)
+                start_pos = match.start()
+                line_idx = doc_string[:start_pos].count('\n')
+                current_map.insert(line_idx + 1, current_map[line_idx])
+
+                return f"{match.group(1)}\n\n{match.group(2)}{list_item} "
+
+            doc_string, count = re.subn(r'([^\n])\n([ \t]*)([-*+]) ', fix_smushed_lists, doc_string)
             if count > 0:
                 LOGGER.warning("%s:%d: Fixed possible 'smushed' lists", self.robot_file, node.lineno)
 
@@ -131,15 +152,20 @@ class StyleChecker(ModelVisitor):
         def fix_bold_header(match):
             self.lint_issues_found = True
             header_text = match.group(3)
+            start_pos = match.start()
+            line_idx = doc_string[:start_pos].count('\n')
+            current_map.insert(line_idx + 1, current_map[line_idx])
+            current_map.insert(line_idx + 2, current_map[line_idx])
             line_number = node.lineno + doc_string[:match.start()].count("\n") + 1
             LOGGER.warning("%s:%d: Smushed bold header detected: '%s'. Added blank lines to ensure it is treated "
-                            "as a title.", self.robot_file, line_number, header_text)
+                           "as a title.", self.robot_file, line_number, header_text)
 
             return f"{match.group(1)}\n\n{match.group(2)}{header_text}\n\n"
 
         bold_header_pattern = r'([^\n])\n([ \t]*)(\*\*(?:(?!\*\*).)+\*\*)(?:\n|$)'
         doc_string = re.sub(bold_header_pattern, fix_bold_header, doc_string)
 
+        manager = StyleManager(current_file=self.robot_file, line_map=current_map)
         doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)
         doc_node.settings.tab_width = 4
         formatted_doc = manager.format_node(self.line_length, doc_node).rstrip()
