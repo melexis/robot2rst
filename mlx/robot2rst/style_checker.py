@@ -121,8 +121,12 @@ class StyleChecker(ModelVisitor):
 
         manager = StyleManager(current_file=self.robot_file)
 
-        # Ensure bullet lists are preceded by a blank line
+        # 1. Fix 'smushed' lists
         text = re.sub(r'([^\n])\n([ \t]*)([-*+]) ', r'\1\n\n\2\3 ', doc_string)
+
+        # 2. Fix 'smushed' bold lines/headers (**text** on its own line will be seen as a header/title).
+        bold_header_pattern = r'([^\n])\n([ \t]*)(\*\*(?:(?!\*\*).)+\*\*)(?:\n|$)'
+        text = re.sub(bold_header_pattern, r'\1\n\n\2\3\n\n', text)
 
         doc_node = manager.parse_string(text, line_offset=node.lineno-1)
         doc_node.settings.tab_width = 4
