@@ -136,7 +136,6 @@ class StyleChecker(ModelVisitor):
         if self.fix:
             # 1. Fix 'smushed' lists
             def fix_smushed_lists(match):
-                self.lint_issues_found = True
                 list_item = match.group(3)
                 start_pos = match.start()
                 line_idx = doc_string[:start_pos].count('\n')
