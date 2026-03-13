@@ -123,11 +123,22 @@ class StyleChecker(ModelVisitor):
 
         if self.fix:
             # 1. Fix 'smushed' lists
-            doc_string = re.sub(r'([^\n])\n([ \t]*)([-*+]) ', r'\1\n\n\2\3 ', doc_string)
+            doc_string, count = re.subn(r'([^\n])\n([ \t]*)([-*+]) ', r'\1\n\n\2\3 ', doc_string)
+            if count > 0:
+                LOGGER.warning("%s:%d: Fixed possible 'smushed' lists", self.robot_file, node.lineno)
 
             # 2. Fix 'smushed' bold lines/headers (**text** on its own line will be seen as a header/title).
+            def fix_bold_header(match):
+                self.lint_issues_found = True
+                header_text = match.group(3)
+                line_number = node.lineno + doc_string[:match.start()].count("\n") + 1
+                LOGGER.warning("%s:%d: Smushed bold header detected: '%s'. Added blank lines to ensure it is treated "
+                               "as a title.", self.robot_file, line_number, header_text)
+
+                return f"{match.group(1)}\n\n{match.group(2)}{header_text}\n\n"
+
             bold_header_pattern = r'([^\n])\n([ \t]*)(\*\*(?:(?!\*\*).)+\*\*)(?:\n|$)'
-            doc_string = re.sub(bold_header_pattern, r'\1\n\n\2\3\n\n', doc_string)
+            doc_string = re.sub(bold_header_pattern, fix_bold_header, doc_string)
 
         doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)
         doc_node.settings.tab_width = 4
