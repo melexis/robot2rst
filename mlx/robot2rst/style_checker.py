@@ -127,7 +127,8 @@ class StyleChecker(ModelVisitor):
         self.visit(self.model)
 
     def visit_Documentation(self, node):
-        doc_string = node.value
+        original_doc_string = node.value
+        doc_string = original_doc_string
         if not doc_string.strip():
             return
 
@@ -171,7 +172,7 @@ class StyleChecker(ModelVisitor):
         if manager.error_count > 0:
             self.issues_found = True
 
-        if doc_string.strip() == formatted_doc.strip():
+        if original_doc_string.strip() == formatted_doc.strip():
             self.lint_issues_found = False
             return
 
