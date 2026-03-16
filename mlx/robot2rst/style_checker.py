@@ -198,10 +198,16 @@ class StyleChecker(ModelVisitor):
             if original_tokens[0].type == Token.SEPARATOR:
                 indentation = original_tokens[0].value
 
-        # Start with the [Documentation] header
+        doc_keyword = "[Documentation]"
+        for token in original_tokens:
+            if token.type == Token.DOCUMENTATION:
+                doc_keyword = token.value
+                break
+
+        # Start with the original documentation header
         new_tokens = [
             Token(Token.SEPARATOR, indentation),
-            Token(Token.DOCUMENTATION, "[Documentation]"),
+            Token(Token.DOCUMENTATION, doc_keyword),
             Token(Token.SEPARATOR, "  " if lines else ""),
         ]
 
