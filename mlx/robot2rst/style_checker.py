@@ -157,7 +157,7 @@ class StyleChecker(ModelVisitor):
                     LOGGER.warning("%s:%d: Smushed bold header detected: '%s'. Added blank lines to ensure it is "
                                    "treated as a title.", self.robot_file, line_number, match.group("header"))
 
-                return f"\n\n{match.group("indent")}{match.group("header")}\n\n"
+                return f"\n\n{match.group('indent')}{match.group('header')}\n\n"
 
             pattern = r'(?P<before>[\n])?\n(?P<indent>[ \t]*)(?P<header>\*\*(?:(?!\*\*).)+\*\*)\n(?P<after>\n)?'
             doc_string = re.sub(pattern, fix_bold_header, doc_string)
