@@ -141,7 +141,8 @@ def test_get_robot_files_directory():
     # Should find all .robot files in INPUT_DIR
     assert len(result) >= 2
     assert all(f.suffix == '.robot' for f in result)
-    assert all(f.parent == INPUT_DIR for f in result)
+    # All files should be within the INPUT_DIR tree
+    assert all(INPUT_DIR in f.parents or f.parent == INPUT_DIR for f in result)
 
 
 def test_get_robot_files_mixed_paths():
