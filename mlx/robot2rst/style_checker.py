@@ -147,8 +147,8 @@ class StyleChecker(ModelVisitor):
                     start_pos = match.start()
                     line_idx = doc_string[:start_pos].count('\n') + bold_insertions
                     current_map.insert(line_idx + 1, current_map[line_idx])
-                    current_map.insert(line_idx + 2, current_map[line_idx])
                     if not match.group('before') and not match.group('after'):
+                        current_map.insert(line_idx + 2, current_map[line_idx])
                         bold_insertions += 2
                     else:
                         bold_insertions += 1
