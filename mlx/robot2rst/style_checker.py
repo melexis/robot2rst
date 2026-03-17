@@ -181,9 +181,15 @@ class StyleChecker(ModelVisitor):
                 LOGGER.warning("%s:%d: Fixed possible 'smushed' lists", self.robot_file, node.lineno)
 
         manager = StyleManager(current_file=self.robot_file, line_map=current_map)
-        doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)
-        doc_node.settings.tab_width = 4
-        formatted_doc = manager.format_node(self.line_length, doc_node).rstrip()
+        try:
+            doc_node = manager.parse_string(doc_string, line_offset=node.lineno-1)
+            doc_node.settings.tab_width = 4
+            formatted_doc = manager.format_node(self.line_length, doc_node).rstrip()
+        except Exception as exc:
+            LOGGER.error("%s:%d: Failed to parse/format documentation: %s", self.robot_file, node.lineno, exc)
+            self.issues_found = True
+            return
+
         if manager.error_count > 0:
             self.issues_found = True
 
