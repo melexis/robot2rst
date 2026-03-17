@@ -347,7 +347,8 @@ def test_line_numbers_in_warnings(caplog):
     robot_file_to_fix = OUTPUT_DIR / file_name
     shutil.copy(robot_file_original, robot_file_to_fix)
 
-    sys.argv = ["robot2rst", "stylecheck", str(robot_file_to_fix), "--enable-bold-headers", "--fix"]
+    sys.argv = ["robot2rst", "stylecheck", str(robot_file_to_fix), "--enable-bold-headers", "--fix",
+                "--trailing-continuation"]
 
     with caplog.at_level(logging.WARNING):
         robot2rst_main()

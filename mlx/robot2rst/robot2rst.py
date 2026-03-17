@@ -109,7 +109,8 @@ def run_stylecheck(args):
     files_checked = False
     for robot_file in get_robot_files(args.paths):
         files_checked = True
-        style_kwargs = {"line_length": args.line_length, "enable_bold_headers": args.enable_bold_headers}
+        style_kwargs = {"line_length": args.line_length, "enable_bold_headers": args.enable_bold_headers,
+                        "trailing_continuation": args.trailing_continuation}
         parser = StyleChecker(robot_file, fix=args.fix, **style_kwargs)
         parser.run()
 
@@ -235,6 +236,9 @@ examples:
                                    "length of the [Documentation] tag for example). Default: 100.")
     parser_stylecheck.add_argument("--enable-bold-headers", action="store_true",
                                    help="Make sure that bold lines are seen as header.")
+    parser_stylecheck.add_argument("--trailing-continuation", action="store_true",
+                                   help="Add a trailing '...' continuation to preserve a blank line at the end of "
+                                   "the docstring.")
     parser_stylecheck.set_defaults(func=run_stylecheck)
 
     # Make 'convert' the default command if no other command is specified

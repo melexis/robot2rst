@@ -119,6 +119,7 @@ class StyleChecker(ModelVisitor):
         self.fix = fix
         self.line_length = kwargs.get('line_length', 100)
         self.enable_bold_headers = kwargs.get('enable_bold_headers', False)
+        self.trailing_continuation = kwargs.get('trailing_continuation', False)
         self.model = get_model(robot_file)
 
         self.issues_found = False
@@ -247,12 +248,13 @@ class StyleChecker(ModelVisitor):
                     Token(Token.ARGUMENT, line),
                     Token(Token.EOL, "\n")
                 ])
-            # End with a continuation to preserve blank line at the end of the docstring
-            new_tokens.extend([
-                    Token(Token.SEPARATOR, indentation),
-                    Token(Token.CONTINUATION, "..."),
-                    Token(Token.EOL, "\n")
-            ])
+            if self.trailing_continuation:
+                # End with a continuation to preserve blank line at the end of the docstring
+                new_tokens.extend([
+                        Token(Token.SEPARATOR, indentation),
+                        Token(Token.CONTINUATION, "..."),
+                        Token(Token.EOL, "\n")
+                ])
         else:
             new_tokens.append(Token(Token.EOL, "\n"))
 
