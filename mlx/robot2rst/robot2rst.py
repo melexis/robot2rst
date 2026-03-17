@@ -109,7 +109,7 @@ def run_stylecheck(args):
     files_checked = False
     for robot_file in get_robot_files(args.paths):
         files_checked = True
-        style_kwargs = {"line_length": args.line_length}
+        style_kwargs = {"line_length": args.line_length, "enable_bold_headers": args.enable_bold_headers}
         parser = StyleChecker(robot_file, fix=args.fix, **style_kwargs)
         parser.run()
 
@@ -233,6 +233,8 @@ examples:
     parser_stylecheck.add_argument("--line-length", type=int, default=100,
                                    help="Max line length for RST blocks (note: the line length does not include the "
                                    "length of the [Documentation] tag for example). Default: 100.")
+    parser_stylecheck.add_argument("--enable-bold-headers", action="store_true",
+                                   help="Make sure that bold lines are seen as header.")
     parser_stylecheck.set_defaults(func=run_stylecheck)
 
     # Make 'convert' the default command if no other command is specified
