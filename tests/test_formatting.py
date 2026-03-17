@@ -334,3 +334,28 @@ Test Case
         # If it returns 0, the test expects layout issues but none were found
         # This is acceptable as the formatter may handle it without reporting issues
         assert result_code in [0, 1]
+
+
+def test_line_numbers_in_warnings(caplog):
+    """Test that the style checker reports correct line numbers for smushed lists and bold headers."""
+    file_name = "smushed_doc.robot"
+    robot_file_original = INPUT_DIR / file_name
+    if OUTPUT_DIR.exists():
+        shutil.rmtree(OUTPUT_DIR)
+    OUTPUT_DIR.mkdir()
+    robot_file_to_fix = OUTPUT_DIR / file_name
+    shutil.copy(robot_file_original, robot_file_to_fix)
+
+    sys.argv = ["robot2rst", "stylecheck", str(robot_file_to_fix), "--enable-bold-headers", "--fix"]
+
+    with caplog.at_level(logging.WARNING):
+        robot2rst_main()
+
+    log_text = caplog.text
+    assert (f"{robot_file_to_fix}:8: Smushed bold header detected: '**A smushed bold header**'. "
+            "Added blank lines to ensure it is treated as a title.") in log_text
+    assert (f"{robot_file_to_fix}:13: Smushed bold header detected: '**Another smushed bold header**'. "
+            "Added blank lines to ensure it is treated as a title.") in log_text
+    assert f"{robot_file_to_fix}:3: Fixed possible 'smushed' lists" in log_text
+    assert f"{robot_file_to_fix}:6: Bullet list ends without a blank line; unexpected unindent." in log_text
+    assert f"{robot_file_to_fix}:16: Bullet list ends without a blank line; unexpected unindent." in log_text
