@@ -142,21 +142,25 @@ class StyleChecker(ModelVisitor):
 
             def fix_bold_header(match):
                 nonlocal bold_insertions
-                self.lint_issues_found = True
-                header_text = match.group(3)
-                start_pos = match.start()
-                line_idx = doc_string[:start_pos].count('\n') + bold_insertions
-                current_map.insert(line_idx + 1, current_map[line_idx])
-                current_map.insert(line_idx + 2, current_map[line_idx])
-                bold_insertions += 2
-                line_number = node.lineno + doc_string[:match.start()].count("\n") + 1
-                LOGGER.warning("%s:%d: Smushed bold header detected: '%s'. Added blank lines to ensure it is treated "
-                            "as a title.", self.robot_file, line_number, header_text)
+                if not match.group('before') or not match.group('after'):
+                    self.lint_issues_found = True
+                    start_pos = match.start()
+                    line_idx = doc_string[:start_pos].count('\n') + bold_insertions
+                    current_map.insert(line_idx + 1, current_map[line_idx])
+                    current_map.insert(line_idx + 2, current_map[line_idx])
+                    if not match.group('before') and not match.group('after'):
+                        bold_insertions += 2
+                    else:
+                        bold_insertions += 1
+                    extra = 2 if match.group('before') else 1
+                    line_number = node.lineno + doc_string[:match.start()].count("\n") + extra
+                    LOGGER.warning("%s:%d: Smushed bold header detected: '%s'. Added blank lines to ensure it is "
+                                   "treated as a title.", self.robot_file, line_number, match.group("header"))
 
-                return f"{match.group(1)}\n\n{match.group(2)}{header_text}\n\n"
+                return f"\n\n{match.group("indent")}{match.group("header")}\n\n"
 
-            bold_header_pattern = r'([^\n])\n([ \t]*)(\*\*(?:(?!\*\*).)+\*\*)(?:\n|$)'
-            doc_string = re.sub(bold_header_pattern, fix_bold_header, doc_string)
+            pattern = r'(?P<before>[\n])?\n(?P<indent>[ \t]*)(?P<header>\*\*(?:(?!\*\*).)+\*\*)\n(?P<after>\n)?'
+            doc_string = re.sub(pattern, fix_bold_header, doc_string)
 
         if self.fix:
             # 2. Fix 'smushed' lists
