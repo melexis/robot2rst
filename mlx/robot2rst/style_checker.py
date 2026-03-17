@@ -188,7 +188,6 @@ class StyleChecker(ModelVisitor):
             self.issues_found = True
 
         if original_doc_string.strip() == formatted_doc.strip():
-            self.lint_issues_found = False
             return
 
         self.lint_issues_found = True
