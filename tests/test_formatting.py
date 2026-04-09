@@ -220,6 +220,7 @@ Test With Whitespace Doc
 
         # Whitespace-only documentation should not cause errors
         assert not checker.issues_found
+        assert not checker.lint_issues_found
 
 
 def test_stylechecker_custom_line_length():
