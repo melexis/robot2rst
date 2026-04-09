@@ -42,6 +42,7 @@ class StyleManager(Manager):
             for child in node.children
             if isinstance(child, nodes.system_message)
             and child.attributes["type"] != "INFO"  # type: ignore[attr]
+            and child.children
             and child.children[0].astext()
             not in IgnoreMessagesReporter.ignored_messages
         ]
