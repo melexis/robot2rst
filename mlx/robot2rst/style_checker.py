@@ -65,7 +65,7 @@ class StyleManager(Manager):
                     "%s:%d: %s",
                     self.current_file,
                     absolute_line,
-                    error.children[0].children[0].astext(),  # type: ignore[attr]
+                    (error.astext().splitlines()[0] if error.astext() else "RST parsing issue"),
                 )
         node.children = [
             child
