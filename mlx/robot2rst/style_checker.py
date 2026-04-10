@@ -231,10 +231,9 @@ class StyleChecker(ModelVisitor):
     def _rewrite_tokens(self, node, formatted_doc):
         """Rebuilds the Documentation node tokens for Robot Framework to save later.
 
-        This is necessary because the original tokens are immutable. To change the
-        documentation content, we must create new tokens with the formatted text.
-        Without this, any reformatting of the documentation would not be persisted
-        when the Robot Framework model is saved.
+        This is necessary because the original tokens are immutable. To change the documentation content,
+        we must create new tokens with the formatted text. Without this, any reformatting of the documentation would
+        not be persisted when the Robot Framework model is saved.
 
         Args:
             node: The Documentation node to rewrite.
