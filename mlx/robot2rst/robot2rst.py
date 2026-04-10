@@ -97,7 +97,10 @@ def get_robot_files(paths):
 
 
 def run_stylecheck(args):
-    """Runs the style checker and fixer."""
+    """Command handler for the 'stylecheck' subcommand.
+
+    It finds Robot files in the given paths, runs the StyleChecker on them, and reports the results.
+    """
     try:
         from .style_checker import StyleChecker
     except ImportError:
@@ -129,7 +132,10 @@ def run_stylecheck(args):
 
 
 def run_conversion(args):
-    """Runs the robot to rst conversion."""
+    """Command handler for the 'convert' subcommand.
+
+    It processes command-line arguments, parses the input Robot file, and generates the final RST file.
+    """
     type_map = {
         'i': 'integration',
         'q': 'qualification',
@@ -261,6 +267,7 @@ examples:
 
 
 def entrypoint():
+    """Entry point for the command-line script"""
     sys.exit(main())
 
 

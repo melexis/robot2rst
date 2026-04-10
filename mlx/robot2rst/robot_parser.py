@@ -33,9 +33,11 @@ class ParserApplication(ModelVisitor):
         self.tags_for_inclusion = tags_for_inclusion
 
     def run(self):
+        """Runs the parser on the parsed Robot Framework model."""
         self.visit(self.model)
 
     def visit_VariableSection(self, node):
+        """Visitor method for 'Variable' sections. Extracts scalar variables and their values."""
         for element in node.body:
             element_type = getattr(element, 'type', None)
             if element_type == Token.VARIABLE:
@@ -47,6 +49,11 @@ class ParserApplication(ModelVisitor):
                 self.variables[name] = value
 
     def visit_TestCase(self, node):
+        """Visitor method for 'TestCase' nodes.
+
+        Extracts the test case name, documentation, and tags. It also performs environment variable substitution in
+        the documentation and evaluates if the test case should be included based on its tags.
+        """
         doc = ''
         tags = []
         for element in node.body:
@@ -76,6 +83,16 @@ class ParserApplication(ModelVisitor):
             self.tests.append(self.TestAttributes(node.name, doc, tags))
 
     def evaluate_inclusion(self, tags):
+        """Evaluates if a test case should be included based on its tags.
+
+        A test case is included if every regex in `self.tags_for_inclusion` matches at least one of its tags.
+
+        Args:
+            tags (list[str]): A list of tags from the test case.
+
+        Returns:
+            bool: True if the test case should be included, False otherwise.
+        """
         for pattern in self.tags_for_inclusion:
             regexp = re.compile(pattern)
             for tag in tags:
