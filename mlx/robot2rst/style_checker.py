@@ -21,6 +21,13 @@ class StyleManager(Manager):
     but also more tolerant of errors.
     """
     def __init__(self, current_file, line_map=None):
+        """Initializes the StyleManager.
+
+        Args:
+            current_file (str): The path to the file being processed.
+            line_map (list[int], optional): A map of formatted lines to original lines, used for accurate error
+                reporting. Defaults to None.
+        """
         super().__init__(current_file=current_file, reporter=Reporter())
         self.line_map = line_map
         # Override settings for aggressive formatting but high error tolerance
@@ -28,12 +35,14 @@ class StyleManager(Manager):
         self.settings.halt_level = 6    # Never Halt
 
     def _pre_process(self, node: nodes.Node, line_offset: int, block_length: int) -> None:
-        """Preprocess nodes.
+        """Preprocesses docutils nodes before formatting.
 
-        This does some preprocessing to all nodes that is generic across node types and
-        is therefore most convenient to do as a simple recursive function rather than as
-        part of the big dispatcher class.
+        This method is an override from the upstream 'docstrfmt' library. It's modified to be more tolerant of RST
+        parsing errors. Instead of halting, it logs parsing errors as warnings and removes the corresponding
+        'system_message' nodes, allowing formatting to continue.
 
+        It also performs generic preprocessing on nodes, such as matching references to targets and sorting anonymous
+        targets, before recursively processing child nodes.
         """
         # Strip all system_message nodes. (Just formatting them with no markup isn't enough, since that
         # could lead to extra spaces or empty lines between other elements.)
@@ -127,9 +136,23 @@ class StyleChecker(ModelVisitor):
         self.lint_issues_found = False
 
     def run(self):
+        """Runs the style checker on the parsed Robot Framework model."""
         self.visit(self.model)
 
     def visit_Documentation(self, node):
+        """Visitor method for 'Documentation' nodes.
+
+        This method is called for each documentation section in the Robot file.
+        It performs RST style checking and, if '--fix' is enabled, applies
+        formatting changes.
+
+        The fixes include:
+        -  Smushed bold headers: In RST, a bolded line like "**Title**" is only treated as a title if it is surrounded
+           by blank lines. This fix (controlled by `enable_bold_headers`) adds the necessary blank lines.
+        -  Smushed lists: Ensures that bullet points are separated from preceding text by a blank line to be rendered
+           correctly.
+        -  General RST formatting: Applies standard RST layout rules via the `docstrfmt` library.
+        """
         original_doc_string = node.value
         doc_string = original_doc_string
         if not doc_string.strip():
@@ -139,7 +162,7 @@ class StyleChecker(ModelVisitor):
         current_map = list(range(len(original_lines)))
 
         if self.enable_bold_headers:
-            # 1. Fix 'smushed' bold lines/headers (**text** on its own line will be seen as a header/title).
+            # 1. Fix 'smushed' bold lines that should be headers (see docstring for details).
             bold_insertions = 0
 
             def fix_bold_header(match):
@@ -165,7 +188,7 @@ class StyleChecker(ModelVisitor):
             doc_string = re.sub(pattern, fix_bold_header, doc_string)
 
         if self.fix:
-            # 2. Fix 'smushed' lists
+            # 2. Fix 'smushed' lists (see docstring for details).
             list_insertions = 0
 
             def fix_smushed_lists(match):
@@ -207,6 +230,11 @@ class StyleChecker(ModelVisitor):
 
     def _rewrite_tokens(self, node, formatted_doc):
         """Rebuilds the Documentation node tokens for Robot Framework to save later.
+
+        This is necessary because the original tokens are immutable. To change the
+        documentation content, we must create new tokens with the formatted text.
+        Without this, any reformatting of the documentation would not be persisted
+        when the Robot Framework model is saved.
 
         Args:
             node: The Documentation node to rewrite.
