@@ -242,7 +242,7 @@ class StyleChecker(ModelVisitor):
         lines = formatted_doc.splitlines()
         original_tokens = node.tokens
 
-        indentation = "    "
+        indentation = ""
         if original_tokens:
             # Get indentation from the first separator
             if original_tokens[0].type == Token.SEPARATOR:
