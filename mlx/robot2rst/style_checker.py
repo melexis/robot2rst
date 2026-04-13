@@ -220,7 +220,7 @@ class StyleChecker(ModelVisitor):
 
             doc_string, count = re.subn(r'([^\n])\n([ \t]*)([-*+]) ', fix_smushed_lists, doc_string)
             if count > 0:
-                LOGGER.warning("%s:%d: Fixed possible 'smushed' lists", self.robot_file, node.lineno)
+                LOGGER.info("%s:%d: Fixed possible 'smushed' lists", self.robot_file, node.lineno)
 
         manager = StyleManager(current_file=self.robot_file, line_map=current_map)
         try:
