@@ -146,9 +146,12 @@ class StyleChecker(ModelVisitor):
         Sets a flag to indicate that the visitor is inside a test case, so that the `visit_Documentation` method knows
         to process the documentation.
         """
+        previous = self._in_test_case
         self._in_test_case = True
-        self.generic_visit(node)
-        self._in_test_case = False
+        try:
+            self.generic_visit(node)
+        finally:
+            self._in_test_case = previous
 
     def visit_Documentation(self, node):
         """Visitor method for 'Documentation' nodes.
