@@ -78,4 +78,5 @@ html_static_path = [
 
 
 def setup(app):
+    """Sphinx setup function. Adds the 'FLASH' tag."""
     tags.add('FLASH')

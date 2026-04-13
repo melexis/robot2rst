@@ -1,0 +1,7 @@
+- id: robot2rst-stylecheck
+  name: Robot Framework RST Style Check
+  description: Checks and fixes RST syntax/layout in Robot Framework [Documentation] blocks.
+  entry: robot2rst stylecheck
+  language: python
+  files: \.robot$
+  additional_dependencies: ["mlx.robot2rst[stylecheck]"]

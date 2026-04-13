@@ -79,38 +79,63 @@ def _tweak_prefix(prefix):
     return prefix
 
 
-def main():
-    '''Main entry point for script: parse arguments and execute'''
-    parser = argparse.ArgumentParser(description='Convert robot test cases to reStructuredText with traceable items.')
-    parser.add_argument("-i", "--robot", dest='robot_file', required=True,
-                        help='Input robot file')
-    parser.add_argument("-o", "--rst", dest='rst_file', required=True,
-                        help='Output RST file, e.g. my_component_qtp.rst')
-    parser.add_argument("--only", dest="expression", default="",
-                        help="Expression of tags for Sphinx' `only` directive that surrounds all RST content. "
-                        "By default, no `only` directive is generated.")
-    parser.add_argument("-p", "--prefix", default='QTEST-',
-                        help="Overrides the default 'QTEST-' prefix.")
-    parser.add_argument("-r", "--relationships", nargs='*',
-                        help="Name(s) of the relationship(s) used to link to items in Tags section. The default value "
-                             "is 'validates'.")
-    parser.add_argument("-t", "--tags", nargs='*',
-                        help="Zero or more Python regexes for matching tags to treat them as traceable targets via a "
-                             "relationship. All tags get matched by default.")
-    parser.add_argument("--include", nargs='*', default=[],
-                        help="Zero or more Python regexes for matching tags to filter test cases. "
-                             "If every regex matches at least one of a test case's tags, the test case is included.")
-    parser.add_argument("-c", "--coverage", nargs='*',
-                        help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in -t, --tags.")
-    parser.add_argument("--type", default='q',
-                        help="Give value that starts with 'q' or 'i' (case-insensitive) to explicitly define "
-                             "the type of test: qualification/integration test. The default is 'qualification'.")
-    parser.add_argument("--trim-suffix", action='store_true',
-                        help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed to '-'.")
+def get_robot_files(paths):
+    """Yields Path objects for all robot files found in the input paths.
 
-    logging.basicConfig(level=logging.INFO)
-    args = parser.parse_args()
+    Args:
+        paths (list of str): List of file or directory paths.
 
+    Yields:
+        Path: Path object for each robot file found.
+    """
+    for p in paths:
+        path = Path(p)
+        if path.is_file() and path.suffix == ".robot":
+            yield path
+        elif path.is_dir():
+            yield from path.rglob("*.robot")
+
+
+def run_stylecheck(args):
+    """Command handler for the 'stylecheck' subcommand.
+
+    It finds Robot files in the given paths, runs the StyleChecker on them, and reports the results.
+    """
+    try:
+        from .style_checker import StyleChecker
+    except ImportError:
+        LOGGER.error("Missing packages. Install with 'pip install mlx.robot2rst[stylecheck]'")
+        return 1
+
+    issues_found = False
+    lint_issues_found = False
+    files_checked = False
+    for robot_file in get_robot_files(args.paths):
+        files_checked = True
+        style_kwargs = {"line_length": args.line_length, "enable_bold_headers": args.enable_bold_headers,
+                        "trailing_continuation": args.trailing_continuation}
+        parser = StyleChecker(robot_file, fix=args.fix, **style_kwargs)
+        parser.run()
+
+        if (parser.issues_found or parser.lint_issues_found) and args.fix:
+            parser.model.save(robot_file)
+
+        if not (parser.issues_found or parser.lint_issues_found):
+            LOGGER.info("%s: No RST syntax/layout issues found", robot_file)
+        issues_found = issues_found or parser.issues_found
+        lint_issues_found = lint_issues_found or parser.lint_issues_found
+
+    if not files_checked:
+        LOGGER.warning("No Robot Framework files found to check.")
+
+    return 1 if issues_found or (args.fail_on_layout and lint_issues_found) else 0
+
+
+def run_conversion(args):
+    """Command handler for the 'convert' subcommand.
+
+    It processes command-line arguments, parses the input Robot file, and generates the final RST file.
+    """
     type_map = {
         'i': 'integration',
         'q': 'qualification',
@@ -142,6 +167,7 @@ def main():
 
     parser = ParserApplication(Path(args.robot_file), args.include)
     parser.run()
+
     if parser.tests:
         exit_code = generate_robot_2_rst(parser, Path(args.rst_file), prefix, relationship_config,
                                          gen_matrix, test_type=test_type, only=args.expression, coverages=coverages)
@@ -154,7 +180,94 @@ def main():
     return exit_code
 
 
+def main():
+    '''Main entry point for script: parse arguments and execute'''
+    parser = argparse.ArgumentParser(
+        description='Convert robot test cases to reStructuredText with traceable items.',
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.epilog = """
+examples:
+  # Convert a file (default command)
+  robot2rst -i input.robot -o output.rst
+
+  # Explicitly call convert
+  robot2rst convert -i input.robot -o output.rst
+
+  # Check style of all .robot files in the current directory and subdirectories
+  robot2rst stylecheck --fix
+"""
+    subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+    # Conversion command
+    parser_convert = subparsers.add_parser('convert', help='Converts a Robot Framework file to a reStructuredText '
+                                           '(.rst) file (default).')
+    parser_convert.add_argument("-i", "--robot", dest='robot_file', required=True,
+                                help='Input robot file')
+    parser_convert.add_argument("-o", "--rst", dest='rst_file', required=True,
+                                help='Output RST file, e.g. my_component_qtp.rst')
+    parser_convert.add_argument("--only", dest="expression", default="",
+                                help="Expression of tags for Sphinx' `only` directive that surrounds all RST content.")
+    parser_convert.add_argument("-p", "--prefix", default='QTEST-',
+                                help="Overrides the default 'QTEST-' prefix.")
+    parser_convert.add_argument("-r", "--relationships", nargs='*',
+                                help="Name(s) of the relationship(s) used to link to items in Tags section. "
+                                "Default: 'validates'.")
+    parser_convert.add_argument("-t", "--tags", nargs='*',
+                                help="Python regexes for matching tags to treat as traceable targets. "
+                                "Matches all by default.")
+    parser_convert.add_argument("--include", nargs='*', default=[],
+                                help="Python regexes for matching tags to filter test cases.")
+    parser_convert.add_argument("-c", "--coverage", nargs='*',
+                                help="Minimum coverage percentages for the item-matrix(es); 1 value per tag in --tags.")
+    parser_convert.add_argument("--type", default='q',
+                                help="Type of test ('q' for qualification, 'i' for integration). "
+                                "Default: 'qualification'.")
+    parser_convert.add_argument("--trim-suffix", action='store_true',
+                                help="If the suffix of any prefix or --tags argument ends with '_-' it gets trimmed "
+                                "to '-'.")
+    parser_convert.set_defaults(func=run_conversion)
+
+    # Stylecheck command
+    parser_stylecheck = subparsers.add_parser('stylecheck',
+                                              help='Checks and fixes RST style in Robot documentation blocks.')
+    parser_stylecheck.add_argument('paths', nargs='*', default=['.'],
+                                   help='One or more paths to files or folders to check. Default: current directory.')
+    parser_stylecheck.add_argument("--fix", action="store_true",
+                                   help="Automatically fix RST formatting inside Robot documentation blocks.")
+    parser_stylecheck.add_argument("--fail-on-layout", action="store_true",
+                                   help="Fail on RST layout issues as well as syntax issues.")
+    parser_stylecheck.add_argument("--line-length", type=int, default=100,
+                                   help="Max line length for RST blocks (note: the line length does not include the "
+                                   "length of the [Documentation] tag for example). Default: 100.")
+    parser_stylecheck.add_argument("--enable-bold-headers", action="store_true",
+                                   help="Make sure that bold lines are seen as header.")
+    parser_stylecheck.add_argument("--trailing-continuation", action="store_true",
+                                   help="Add a trailing '...' continuation to preserve a blank line at the end of "
+                                   "the docstring.")
+    parser_stylecheck.set_defaults(func=run_stylecheck)
+
+    # Make 'convert' the default command if no other command is specified
+    commands = ['convert', 'stylecheck']
+    help_flags = ['-h', '--help']
+    is_command_present = any(cmd in sys.argv[1:2] for cmd in commands + help_flags)
+
+    if not is_command_present and len(sys.argv) > 1:
+        sys.argv.insert(1, 'convert')
+
+    logging.basicConfig(level=logging.INFO)
+    args = parser.parse_args()
+
+    if hasattr(args, 'func'):
+        return args.func(args)
+    else:
+        # No command was given (e.g., `robot2rst` or `robot2rst --help`)
+        parser.print_help()
+        return 0
+
+
 def entrypoint():
+    """Entry point for the command-line script"""
     sys.exit(main())
 
 
