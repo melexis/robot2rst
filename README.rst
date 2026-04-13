@@ -141,7 +141,7 @@ This functionality is provided for test case documentation only.
 
 
 .. note::
-    The style checker will only process documentation within ``[Test Case]`` sections. It ignores suite-level and
+    The style checker will only process documentation within the ``*** Test Cases ***`` section. It ignores suite-level and
     keyword documentation.
 
 
