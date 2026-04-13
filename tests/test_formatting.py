@@ -617,6 +617,7 @@ def test_suite_doc_with_bad_rst_does_not_trigger_fix(caplog):
 
         checker = StyleChecker(robot_file, fix=True)
         checker.run()
+        checker.model.save(robot_file)
 
         assert not checker.issues_found
         assert not checker.lint_issues_found
