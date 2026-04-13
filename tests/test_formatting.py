@@ -507,8 +507,24 @@ def test_in_test_case_flag_restored_after_visit():
 
         # Before run the flag should be False
         assert checker._in_test_case is False
-        checker.run()
-        # After run the flag must be restored to False
+
+        # Monkeypatch generic_visit to raise an exception
+        original_generic_visit = checker.generic_visit
+
+        def failing_generic_visit(node):
+            original_generic_visit(node)
+            raise RuntimeError("Deliberate exception for testing")
+
+        checker.generic_visit = failing_generic_visit
+
+        # Run should raise the exception, but the flag must still be restored
+        try:
+            checker.run()
+        except RuntimeError as e:
+            if "Deliberate exception for testing" not in str(e):
+                raise
+
+        # After run (even with exception), the flag must be restored to False
         assert checker._in_test_case is False
 
 
@@ -614,19 +630,20 @@ def test_rewrite_tokens_indentation_from_separator():
     Before this PR, indentation was hardcoded to '    ' (4 spaces). After the PR,
     it defaults to '' and then reads the actual separator from original_tokens.
     This test verifies that the reformatted file preserves the indentation from the
-    robot file's separator token (typically 4 spaces for standard robot files).
+    robot file's separator token. We use a non-default 2-space separator to ensure
+    the test can catch regression to a hardcoded 4-space indent.
     """
     with tempfile.TemporaryDirectory() as tmpdir:
         tmppath = Path(tmpdir)
         robot_file = tmppath / "test.robot"
-        # Write a robot file where the [Documentation] block uses standard 4-space indentation
+        # Write a robot file where the [Documentation] block uses 2-space indentation
         # and has a long line that the formatter will need to wrap (triggering _rewrite_tokens)
         long_line = "word " * 25  # ~125 chars, will be wrapped at default 100
         robot_file.write_text(
             "*** Test Cases ***\n"
             "Test Case\n"
-            f"    [Documentation]    {long_line.strip()}\n"
-            "    Log    Hello\n"
+            f"  [Documentation]  {long_line.strip()}\n"
+            "  Log  Hello\n"
         )
 
         checker = StyleChecker(robot_file, fix=True)
@@ -639,7 +656,7 @@ def test_rewrite_tokens_indentation_from_separator():
         checker.model.save(robot_file)
 
         # After fix, read the reformatted file and check that continuation lines
-        # start with the separator from the original token (4 spaces), not a hardcoded value
+        # use the separator from the original token (2 spaces), not a hardcoded value
         fixed_content = robot_file.read_text()
         lines = fixed_content.splitlines()
 
@@ -648,7 +665,9 @@ def test_rewrite_tokens_indentation_from_separator():
         assert continuation_lines, "Expected at least one continuation line after fix"
 
         for line in continuation_lines:
-            # The continuation line prefix comes from the separator token (4 spaces)
-            assert line.startswith("    "), (
-                f"Expected continuation line to start with 4-space separator indent, got: {line!r}"
+            # Extract the prefix before the continuation marker
+            prefix_before_dots = line[:line.index("...")]
+            # The prefix must exactly match the 2-space separator from the original file
+            assert prefix_before_dots == "  ", (
+                f"Expected continuation line prefix to be '  ' (2 spaces), got: {prefix_before_dots!r}"
             )
