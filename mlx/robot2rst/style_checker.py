@@ -131,6 +131,7 @@ class StyleChecker(ModelVisitor):
         self.enable_bold_headers = kwargs.get('enable_bold_headers', False)
         self.trailing_continuation = kwargs.get('trailing_continuation', False)
         self.model = get_model(robot_file)
+        self._in_test_case = False
 
         self.issues_found = False
         self.lint_issues_found = False
@@ -138,6 +139,16 @@ class StyleChecker(ModelVisitor):
     def run(self):
         """Runs the style checker on the parsed Robot Framework model."""
         self.visit(self.model)
+
+    def visit_TestCase(self, node):
+        """Visitor method for 'TestCase' nodes.
+
+        Sets a flag to indicate that the visitor is inside a test case, so that the `visit_Documentation` method knows
+        to process the documentation.
+        """
+        self._in_test_case = True
+        self.generic_visit(node)
+        self._in_test_case = False
 
     def visit_Documentation(self, node):
         """Visitor method for 'Documentation' nodes.
@@ -153,6 +164,9 @@ class StyleChecker(ModelVisitor):
            correctly.
         -  General RST formatting: Applies standard RST layout rules via the `docstrfmt` library.
         """
+        if not self._in_test_case:
+            return
+
         original_doc_string = node.value
         doc_string = original_doc_string
         if not doc_string.strip():
