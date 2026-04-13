@@ -103,6 +103,7 @@ Style Checker & Fixer
 =====================
 
 You can also check and automatically fix the RST syntax and layout within the ``[Documentation]`` blocks of your Robot files.
+This functionality is provided for test case documentation only.
 
 .. code-block:: console
 
@@ -114,18 +115,34 @@ You can also check and automatically fix the RST syntax and layout within the ``
 
     $ robot2rst stylecheck --help
 
-    usage: robot2rst stylecheck [-h] [--fix] [--fail-on-layout] [--line-length LINE_LENGTH] [paths ...]
+    usage: robot2rst stylecheck [-h] [--fix] [--fail-on-layout] [--line-length LINE_LENGTH]
+                                [--enable-bold-headers] [--trailing-continuation]
+                                [paths ...]
 
     positional arguments:
-    paths                 One or more paths to files or folders to check. Default: current directory.
+      paths                 One or more paths to files or folders to check. Default: current
+                            directory.
 
     options:
-    -h, --help            show this help message and exit
-    --fix                 Automatically fix RST formatting inside Robot documentation blocks.
-    --fail-on-layout      Fail on RST layout issues as well as syntax issues.
-    --line-length LINE_LENGTH
-                            Max line length for RST blocks (note: the line length does not include the length
-                            of the [Documentation] tag for example). Default: 100.
+      -h, --help            show this help message and exit
+      --fix                 Automatically fix RST formatting inside Robot documentation
+                            blocks.
+      --fail-on-layout      Fail on RST layout issues as well as syntax issues.
+      --line-length LINE_LENGTH
+                            Max line length for RST blocks (note: the line length does not
+                            include the length of the [Documentation] tag for example).
+                            Default: 100.
+      --enable-bold-headers
+                            Make sure that bold lines are seen as header.
+      --trailing-continuation
+                            Add a trailing '...' continuation to preserve a blank line at the
+                            end of the docstring.
+
+
+
+.. note::
+    The style checker will only process documentation within ``[Test Case]`` sections. It ignores suite-level and
+    keyword documentation.
 
 
 ---------------
