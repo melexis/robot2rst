@@ -362,3 +362,293 @@ def test_line_numbers_in_warnings(caplog):
     assert f"{robot_file_to_fix}:3: Fixed possible 'smushed' lists" in log_text
     assert f"{robot_file_to_fix}:6: Bullet list ends without a blank line; unexpected unindent." in log_text
     assert f"{robot_file_to_fix}:16: Bullet list ends without a blank line; unexpected unindent." in log_text
+
+
+# Tests for PR changes: test-case-only scoping of visit_Documentation
+# and indentation fix in _rewrite_tokens
+
+def test_suite_documentation_is_ignored():
+    """Test that StyleChecker does not process suite-level documentation.
+
+    RST issues in the suite [Documentation] block must be silently ignored because
+    the style checker only targets test-case documentation.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        # Suite-level documentation has a bad bullet list (RST error), but no test cases
+        robot_file.write_text(
+            "*** Settings ***\n"
+            "Documentation    Here comes the bullet list:\n"
+            "...              - Bullet point\n"
+            "...              - without a newline\n"
+            "...              Some more text that should be on the next line.\n"
+            "\n"
+            "*** Test Cases ***\n"
+        )
+        checker = StyleChecker(robot_file, fix=False)
+        checker.run()
+
+        assert not checker.issues_found
+        assert not checker.lint_issues_found
+
+
+def test_keyword_documentation_is_ignored():
+    """Test that StyleChecker skips documentation inside Keywords sections.
+
+    RST errors in keyword documentation must not be reported because the checker
+    only operates on test-case documentation.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        # Keyword documentation contains a bad bullet list (RST error)
+        robot_file.write_text(
+            "*** Keywords ***\n"
+            "My Keyword\n"
+            "    [Documentation]    Here comes a list:\n"
+            "    ...                - Bullet point\n"
+            "    ...                - without a newline\n"
+            "    ...                Some more text that should be on the next line.\n"
+            "    Log    something\n"
+            "\n"
+            "*** Test Cases ***\n"
+        )
+        checker = StyleChecker(robot_file, fix=False)
+        checker.run()
+
+        assert not checker.issues_found
+        assert not checker.lint_issues_found
+
+
+def test_test_case_documentation_is_processed():
+    """Test that StyleChecker processes documentation inside test cases.
+
+    The same bad-bullet RST pattern that is ignored in keyword/suite documentation
+    must be detected when it appears inside a test case.  The bad-bullet pattern
+    is a layout issue (lint), so lint_issues_found is expected to be True.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        robot_file.write_text(
+            "*** Test Cases ***\n"
+            "Test With Bad Bullet\n"
+            "    [Documentation]    Here comes a list:\n"
+            "    ...                - Bullet point\n"
+            "    ...                - without a newline\n"
+            "    ...                Some more text that should be on the next line.\n"
+            "    Log    something\n"
+        )
+        checker = StyleChecker(robot_file, fix=False)
+        checker.run()
+
+        # The bad-bullet RST pattern triggers a layout difference, so lint_issues_found must be True.
+        # This contrasts with keyword/suite docs where neither flag should be set.
+        assert checker.lint_issues_found
+
+
+def test_keyword_bad_rst_does_not_affect_clean_test_case():
+    """Test that RST errors in keyword docs don't pollute the checker result.
+
+    When a keyword has RST issues but the test case documentation is valid,
+    issues_found and lint_issues_found must both remain False.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        robot_file.write_text(
+            "*** Keywords ***\n"
+            "Bad Keyword\n"
+            "    [Documentation]    - Bullet point\n"
+            "    ...                - without a newline\n"
+            "    ...                Smushed text.\n"
+            "    Log    something\n"
+            "\n"
+            "*** Test Cases ***\n"
+            "Clean Test\n"
+            "    [Documentation]    Simple valid documentation.\n"
+            "    Log    Hello\n"
+        )
+        checker = StyleChecker(robot_file, fix=False)
+        checker.run()
+
+        assert not checker.issues_found
+        assert not checker.lint_issues_found
+
+
+def test_in_test_case_flag_initial_state():
+    """Test that _in_test_case flag starts as False before visiting any node."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        robot_file.write_text("*** Test Cases ***\nTest\n    Log    Hello\n")
+        checker = StyleChecker(robot_file, fix=False)
+
+        assert checker._in_test_case is False
+
+
+def test_in_test_case_flag_restored_after_visit():
+    """Test that _in_test_case is False again after visit_TestCase returns.
+
+    The try/finally block must restore the previous value even if an exception
+    occurs during generic_visit.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        robot_file.write_text(
+            "*** Test Cases ***\n"
+            "Test One\n"
+            "    [Documentation]    First test.\n"
+            "    Log    Hello\n"
+        )
+        checker = StyleChecker(robot_file, fix=False)
+
+        # Before run the flag should be False
+        assert checker._in_test_case is False
+        checker.run()
+        # After run the flag must be restored to False
+        assert checker._in_test_case is False
+
+
+def test_in_test_case_flag_is_true_during_generic_visit():
+    """Test that _in_test_case is True while generic_visit processes a TestCase node.
+
+    We verify this by subclassing StyleChecker and recording the flag value
+    inside an overridden generic_visit call.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        robot_file.write_text(
+            "*** Test Cases ***\n"
+            "Test One\n"
+            "    [Documentation]    Some docs.\n"
+            "    Log    Hello\n"
+        )
+
+        flag_values_during_visit = []
+
+        class CapturingChecker(StyleChecker):
+            def generic_visit(self, node):
+                flag_values_during_visit.append(self._in_test_case)
+                super().generic_visit(node)
+
+        checker = CapturingChecker(robot_file, fix=False)
+        checker.run()
+
+        # At least one generic_visit call should have seen _in_test_case as True
+        assert any(flag_values_during_visit), (
+            "Expected _in_test_case to be True during at least one generic_visit call, "
+            f"but recorded values were: {flag_values_during_visit}"
+        )
+
+
+def test_in_test_case_flag_restored_to_previous_not_just_false():
+    """Test that visit_TestCase restores the *previous* value, not just False.
+
+    This is a regression guard for the try/finally pattern: if _in_test_case
+    is True before entering visit_TestCase, it must still be True afterwards.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        robot_file.write_text(
+            "*** Test Cases ***\n"
+            "Test One\n"
+            "    [Documentation]    Some docs.\n"
+            "    Log    Hello\n"
+        )
+        checker = StyleChecker(robot_file, fix=False)
+
+        # Artificially pre-set the flag to True, simulating a nested call
+        checker._in_test_case = True
+
+        # Manually call visit_TestCase on the first test-case node
+        from robot.api import get_model
+        model = checker.model
+        test_case_node = next(
+            tc for section in model.sections
+            for tc in getattr(section, 'body', [])
+            if hasattr(tc, 'name')
+        )
+        checker.visit_TestCase(test_case_node)
+
+        # The flag must be restored to what it was before: True
+        assert checker._in_test_case is True
+
+
+def test_suite_doc_with_bad_rst_does_not_trigger_fix(caplog):
+    """Test that --fix does not modify suite-level documentation.
+
+    Because suite-level docs are skipped, the file must remain unchanged even
+    when --fix is requested.
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        bad_suite_doc_content = (
+            "*** Settings ***\n"
+            "Documentation    Here comes a list:\n"
+            "...              - Bullet point\n"
+            "...              - without a newline\n"
+            "...              Some more text.\n"
+            "\n"
+            "*** Test Cases ***\n"
+        )
+        robot_file.write_text(bad_suite_doc_content)
+
+        checker = StyleChecker(robot_file, fix=True)
+        checker.run()
+
+        assert not checker.issues_found
+        assert not checker.lint_issues_found
+        # File content must be unchanged because the suite doc was not processed
+        assert robot_file.read_text() == bad_suite_doc_content
+
+
+def test_rewrite_tokens_indentation_from_separator():
+    """Test that _rewrite_tokens derives indentation from the token separator, not a hardcoded value.
+
+    Before this PR, indentation was hardcoded to '    ' (4 spaces). After the PR,
+    it defaults to '' and then reads the actual separator from original_tokens.
+    This test verifies that the reformatted file preserves the indentation from the
+    robot file's separator token (typically 4 spaces for standard robot files).
+    """
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmppath = Path(tmpdir)
+        robot_file = tmppath / "test.robot"
+        # Write a robot file where the [Documentation] block uses standard 4-space indentation
+        # and has a long line that the formatter will need to wrap (triggering _rewrite_tokens)
+        long_line = "word " * 25  # ~125 chars, will be wrapped at default 100
+        robot_file.write_text(
+            "*** Test Cases ***\n"
+            "Test Case\n"
+            f"    [Documentation]    {long_line.strip()}\n"
+            "    Log    Hello\n"
+        )
+
+        checker = StyleChecker(robot_file, fix=True)
+        checker.run()
+
+        # Formatting should have found layout issues (line too long) and fixed them
+        assert checker.lint_issues_found
+
+        # Persist the in-memory token changes to disk (normally done by robot2rst.py)
+        checker.model.save(robot_file)
+
+        # After fix, read the reformatted file and check that continuation lines
+        # start with the separator from the original token (4 spaces), not a hardcoded value
+        fixed_content = robot_file.read_text()
+        lines = fixed_content.splitlines()
+
+        # Find continuation lines (lines with '...')
+        continuation_lines = [line for line in lines if line.lstrip().startswith("...")]
+        assert continuation_lines, "Expected at least one continuation line after fix"
+
+        for line in continuation_lines:
+            # The continuation line prefix comes from the separator token (4 spaces)
+            assert line.startswith("    "), (
+                f"Expected continuation line to start with 4-space separator indent, got: {line!r}"
+            )
