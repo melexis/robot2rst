@@ -131,6 +131,7 @@ class StyleChecker(ModelVisitor):
         self.enable_bold_headers = kwargs.get('enable_bold_headers', False)
         self.trailing_continuation = kwargs.get('trailing_continuation', False)
         self.model = get_model(robot_file)
+        self._in_test_case = False
 
         self.issues_found = False
         self.lint_issues_found = False
@@ -138,6 +139,19 @@ class StyleChecker(ModelVisitor):
     def run(self):
         """Runs the style checker on the parsed Robot Framework model."""
         self.visit(self.model)
+
+    def visit_TestCase(self, node):
+        """Visitor method for 'TestCase' nodes.
+
+        Sets a flag to indicate that the visitor is inside a test case, so that the `visit_Documentation` method knows
+        to process the documentation.
+        """
+        previous = self._in_test_case
+        self._in_test_case = True
+        try:
+            self.generic_visit(node)
+        finally:
+            self._in_test_case = previous
 
     def visit_Documentation(self, node):
         """Visitor method for 'Documentation' nodes.
@@ -153,6 +167,9 @@ class StyleChecker(ModelVisitor):
            correctly.
         -  General RST formatting: Applies standard RST layout rules via the `docstrfmt` library.
         """
+        if not self._in_test_case:
+            return
+
         original_doc_string = node.value
         doc_string = original_doc_string
         if not doc_string.strip():
@@ -203,7 +220,7 @@ class StyleChecker(ModelVisitor):
 
             doc_string, count = re.subn(r'([^\n])\n([ \t]*)([-*+]) ', fix_smushed_lists, doc_string)
             if count > 0:
-                LOGGER.warning("%s:%d: Fixed possible 'smushed' lists", self.robot_file, node.lineno)
+                LOGGER.info("%s:%d: Fixed possible 'smushed' lists", self.robot_file, node.lineno)
 
         manager = StyleManager(current_file=self.robot_file, line_map=current_map)
         try:
@@ -242,7 +259,7 @@ class StyleChecker(ModelVisitor):
         lines = formatted_doc.splitlines()
         original_tokens = node.tokens
 
-        indentation = "    "
+        indentation = ""
         if original_tokens:
             # Get indentation from the first separator
             if original_tokens[0].type == Token.SEPARATOR:
