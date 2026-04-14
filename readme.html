@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.7.0 documentation</title>
+  <title>Documentation robot2rst &mdash; mlx.robot2rst 3.7.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.css" />
@@ -14,7 +14,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=229cbe3b"></script>
+      <script src="_static/documentation_options.js?v=86e43a22"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="https://cdn.rawgit.com/aexmachina/jquery-bonsai/master/jquery.bonsai.js"></script>
@@ -180,7 +180,8 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 </section>
 <section id="style-checker-fixer">
 <h3><a class="toc-backref" href="#id4" role="doc-backlink">Style Checker &amp; Fixer</a><a class="headerlink" href="#style-checker-fixer" title="Link to this heading"></a></h3>
-<p>You can also check and automatically fix the RST syntax and layout within the <code class="docutils literal notranslate"><span class="pre">[Documentation]</span></code> blocks of your Robot files.</p>
+<p>You can also check and automatically fix the RST syntax and layout within the <code class="docutils literal notranslate"><span class="pre">[Documentation]</span></code> blocks of your Robot files.
+This functionality is provided for test case documentation only.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>Check<span class="w"> </span>all<span class="w"> </span>.robot<span class="w"> </span>files<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>current<span class="w"> </span>directory
 <span class="go">robot2rst stylecheck</span>
 
@@ -189,19 +190,34 @@ Test case names get converted to item IDs with a configurable prefix. Tags can b
 
 <span class="gp">$ </span>robot2rst<span class="w"> </span>stylecheck<span class="w"> </span>--help
 
-<span class="go">usage: robot2rst stylecheck [-h] [--fix] [--fail-on-layout] [--line-length LINE_LENGTH] [paths ...]</span>
+<span class="go">usage: robot2rst stylecheck [-h] [--fix] [--fail-on-layout] [--line-length LINE_LENGTH]</span>
+<span class="go">                            [--enable-bold-headers] [--trailing-continuation]</span>
+<span class="go">                            [paths ...]</span>
 
 <span class="go">positional arguments:</span>
-<span class="go">paths                 One or more paths to files or folders to check. Default: current directory.</span>
+<span class="go">  paths                 One or more paths to files or folders to check. Default: current</span>
+<span class="go">                        directory.</span>
 
 <span class="go">options:</span>
-<span class="go">-h, --help            show this help message and exit</span>
-<span class="go">--fix                 Automatically fix RST formatting inside Robot documentation blocks.</span>
-<span class="go">--fail-on-layout      Fail on RST layout issues as well as syntax issues.</span>
-<span class="go">--line-length LINE_LENGTH</span>
-<span class="go">                        Max line length for RST blocks (note: the line length does not include the length</span>
-<span class="go">                        of the [Documentation] tag for example). Default: 100.</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  --fix                 Automatically fix RST formatting inside Robot documentation</span>
+<span class="go">                        blocks.</span>
+<span class="go">  --fail-on-layout      Fail on RST layout issues as well as syntax issues.</span>
+<span class="go">  --line-length LINE_LENGTH</span>
+<span class="go">                        Max line length for RST blocks (note: the line length does not</span>
+<span class="go">                        include the length of the [Documentation] tag for example).</span>
+<span class="go">                        Default: 100.</span>
+<span class="go">  --enable-bold-headers</span>
+<span class="go">                        Make sure that bold lines are seen as header.</span>
+<span class="go">  --trailing-continuation</span>
+<span class="go">                        Add a trailing &#39;...&#39; continuation to preserve a blank line at the</span>
+<span class="go">                        end of the docstring.</span>
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The style checker will only process documentation within the <code class="docutils literal notranslate"><span class="pre">***</span> <span class="pre">Test</span> <span class="pre">Cases</span> <span class="pre">***</span></code> section. It ignores suite-level and
+keyword documentation.</p>
 </div>
 </section>
 </section>
